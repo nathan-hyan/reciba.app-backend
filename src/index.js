@@ -23,7 +23,7 @@ app.use(express.json())
 
 // Routes
 
-const auth = require("./routes/auth")
+const auth = require("../routes/auth")
 
 // Route middlewares
 
