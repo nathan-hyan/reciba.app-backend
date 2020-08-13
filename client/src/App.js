@@ -1,6 +1,6 @@
 // Import utilities
-import React, { useState } from 'react';
-import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
+import React from 'react';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 
 // Import context
 import UserContextProvider from './Context/UserContext';
@@ -18,12 +18,14 @@ function App() {
   return (
     <>
       <UserContextProvider>
-        <Navigation />
         <Router>
-          {/* User authentication */}
-          <Route path='/login' component={Login} />
-          <Route path='/logout' component={Logout} />
-          <Route path='/' exact component={Home} />
+          <Navigation />
+          <Switch>
+            {/* User authentication */}
+            <Route path='/login' component={Login} />
+            <Route path='/logout' component={Logout} />
+            <Route path='/' exact component={Home} />
+          </Switch>
         </Router>
       </UserContextProvider>
     </>

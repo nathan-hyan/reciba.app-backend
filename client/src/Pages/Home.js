@@ -1,12 +1,11 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import { Container } from 'react-bootstrap'
-import { UserContext } from '../Context/UserContext'
 
 export default function Home() {
 
     return (
         <Container>
-            
+            <h1 className="display-4">This is stuff</h1>
         </Container>
     )
 }
