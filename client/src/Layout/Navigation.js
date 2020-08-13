@@ -5,7 +5,7 @@ import { faUserCheck, faUserPlus, faHome } from '@fortawesome/free-solid-svg-ico
 
 export default function Navigation() {
     return (
-        <Navbar bg="primary" variant='dark' expand="lg">
+        <Navbar style={{ zIndex: 999 }} bg="primary" variant='dark' expand="lg">
             <Navbar.Brand href="/">Bills App</Navbar.Brand>
             <Navbar.Toggle />
             <Navbar.Collapse>
