@@ -5,9 +5,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheckCircle } from '@fortawesome/free-solid-svg-icons'
 import { notify } from 'react-notify-toast'
 import Axios from 'axios'
+import { UserContext } from '../Context/UserContext'
 
 export default function Login() {
 
+    const user = useContext(UserContext)
     const [login, setLogin] = useState({ email: '', password: '' })
     const [validated, setValidated] = useState(false);
     const history = useHistory();
@@ -32,6 +34,12 @@ export default function Login() {
             Axios.post(`/api/user/login`, login)
                 .then(({ data }) => {
                     if (data.success) {
+                        user.setUserData({
+                            isLoggedIn: true,
+                            token: data.data.token,
+                            name: data.data.name
+                        })
+                        localStorage.setItem('bill-token', data.data.token)
                         notify.show(`✔ ${data.message}`, 'success')
                         history.push("/")
                     } else {

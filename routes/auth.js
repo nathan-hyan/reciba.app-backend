@@ -54,12 +54,49 @@ router.post('/login', async (req, res) => {
             return res.status(401).send({ success: false, message: `Email or password incorrect` })
         } else {
             // Create and send token
-            const token = JWT.sign({ id: user._id }, process.env.TOKEN)
+            const token = JWT.sign({ id: user._id }, process.env.TOKEN, { expiresIn: process.env.TOKEN_TIME })
             res.header('auth', token)
-            res.send({ success: true, message: `Welcome back ${user.name}` })
+            await User.findOneAndUpdate({ _id: user._id }, { lastLogin: new Date() })
+            res.send({ success: true, message: `Welcome back ${user.name}`, data: { name: user.name, token } })
         }
     }
 
+})
+
+// Check for already logged in user
+
+router.post("/loggedInUser", async (req, res) => {
+    const userExist = await User.findOne({ id: req.body._id })
+    if (userExist) {
+        try {
+            const verifiedToken = JWT.verify(req.body.storedToken, process.env.TOKEN)
+            const currentDate = Date.now().toString().substring(0, 10);
+
+            if (currentDate > verifiedToken.exp) {
+                return res.status(401).send({
+                    success: false,
+                    message: "Invalid user, please log in",
+                });
+            } else {
+                const token = JWT.sign({ id: userExist._id }, process.env.TOKEN, { expiresIn: process.env.TOKEN_TIME })
+                await User.findOneAndUpdate({ _id: userExist._id }, { lastLogin: new Date() })
+                res.send({ success: true, message: `Welcome back ${userExist.name}`, data: { name: userExist.name, token } })
+            }
+        } catch (err) {
+
+            console.log(err)
+
+            return res.status(401).send({
+                success: false,
+                message: "Invalid user, please log in",
+            });
+        }
+    } else {
+        return res.status(401).send({
+            success: false,
+            message: "Invalid user, please log in",
+        });
+    }
 })
 
 module.exports = router
