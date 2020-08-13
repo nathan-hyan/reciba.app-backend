@@ -13,7 +13,7 @@ export default function Home() {
 
     return (
         <Container>
-            <Row style={rowStyle} className='align-items-center'>
+            <Row className='h-100-minus align-items-center'>
                 <Col>
                     <h1>The place for your invoice needs! 📃</h1>
 

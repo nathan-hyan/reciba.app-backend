@@ -14,10 +14,6 @@ export default function Login() {
     const [validated, setValidated] = useState(false);
     const history = useHistory();
 
-    const rowStyle = {
-        height: "calc(100vh - 56px)"
-    }
-
     const handleChange = (e) => {
         let { name, value } = e.target;
         setLogin({ ...login, [name]: value })
@@ -55,7 +51,7 @@ export default function Login() {
 
     return (
         <Container>
-            <Row style={rowStyle} className='align-items-center'>
+            <Row className='h-100-minus align-items-center'>
                 <Col />
                 <Col md={6} sm={12} className='shadow rounded bg-light p-3'>
                     <Form onSubmit={onSubmit} noValidate validated={validated}>

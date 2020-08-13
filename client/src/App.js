@@ -7,6 +7,7 @@ import UserContextProvider from './Context/UserContext';
 
 // Import pages
 import Home from './Pages/Home'
+import Signup from './Pages/Signup';
 import Login from './Pages/Login'
 import Logout from './Pages/Logout'
 
@@ -22,6 +23,7 @@ function App() {
           <Navigation />
           <Switch>
             {/* User authentication */}
+            <Route path='/signup' component={Signup} />
             <Route path='/login' component={Login} />
             <Route path='/logout' component={Logout} />
             <Route path='/' exact component={Home} />
