@@ -21,13 +21,9 @@ mongoose.connect(process.env.MONGO_URI,
 
 app.use(express.json())
 
-// Routes
-
-const auth = require("../routes/auth")
-
 // Route middlewares
 
-app.use("/api/user", auth)
+app.use("/api/user", require("./routes/auth"))
 
 // Setting server up
 if (process.env.NODE_ENV === "production") {
