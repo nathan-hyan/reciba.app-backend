@@ -1,6 +1,6 @@
 // Import utilities
 import React from 'react';
-import { BrowserRouter as Router, Route, Switch, browserHistory } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 
 // Import context
 import UserContextProvider from './Context/UserContext';
@@ -18,7 +18,7 @@ function App() {
   return (
     <>
       <UserContextProvider>
-        <Router history={browserHistory}>
+        <Router>
           <Navigation />
           <Switch>
             {/* User authentication */}
