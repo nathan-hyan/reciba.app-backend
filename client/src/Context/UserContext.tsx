@@ -11,7 +11,7 @@ type ContextProps = {
 
 export const UserContext = createContext<Partial<ContextProps>>({});
 
-const UserContextProvider = (props) => {
+const UserContextProvider = (props: { children: React.ReactNode }) => {
 	const storedToken = localStorage.getItem('bill-token');
 	const [ userData, setUserData ] = useState({
 		isLoggedIn: false,

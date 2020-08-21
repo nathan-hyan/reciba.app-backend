@@ -30,6 +30,8 @@
 		"@types/node": "^14.6.0",
 		"@types/react": "^16.9.46",
 		"@types/react-dom": "^16.9.8",
+		"@types/react-notify-toast": "^0.5.2",
+		"@types/react-router-dom": "^5.1.5",
 		"bcryptjs": "^2.4.3",
 		"concurrently": "^5.3.0",
 		"dotenv": "^8.2.0",
