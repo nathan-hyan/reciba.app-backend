@@ -24,7 +24,8 @@ export default function DisplayInvoice() {
     Axios.get(`/api/invoice/single/${id}`).then(({ data }) => {
       setState({ ...data.data });
     });
-  });
+  }),
+    [];
 
   return (
     <Container>
