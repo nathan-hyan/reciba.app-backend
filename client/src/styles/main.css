@@ -1,7 +1,17 @@
 body {
-	background: #f2f2f2;
+  background: #f2f2f2;
 }
 
 .h-100-minus {
-	height: calc(100vh - 56px);
+  height: calc(100vh - 56px);
+}
+
+.no-decoration {
+  border: none;
+  background: transparent;
+}
+
+canvas {
+  width: 100% !important;
+  height: 250px !important;
 }

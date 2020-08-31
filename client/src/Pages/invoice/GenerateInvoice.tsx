@@ -3,17 +3,23 @@ import { Container, Form, Button, Row, Col, InputGroup } from "react-bootstrap";
 import { faSave, faTimesCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { notify } from "react-notify-toast";
+import invoice from "../../Interfaces/invoice";
+import Axios from "axios";
+import { useHistory } from "react-router-dom";
 
 export default function GenerateInvoice() {
-  const [state, setState] = useState({
+  const [state, setState] = useState<invoice>({
+    invoiceNumber: 1,
     date: "",
-    received: "-",
     from: "",
     amountText: "",
     amount: 0,
     concept: "",
     sign: "",
+    currency: "ARS",
   });
+
+  const history = useHistory();
 
   const [validated, setValidated] = useState(false);
 
@@ -33,7 +39,12 @@ export default function GenerateInvoice() {
     if (currentTarget.checkValidity() === false) {
       notify.show("Please verify the form and try again", "error");
     } else {
-      notify.show("Invoice created succesfully", "success");
+      Axios.post(`/api/invoice/`, { ...state }).then(({ data }) => {
+        if (data.id) {
+          history.push(`/invoice/code/${data.id}`);
+        }
+        notify.show(data.message, "success");
+      });
     }
 
     setValidated(true);
@@ -66,17 +77,7 @@ export default function GenerateInvoice() {
             </Row>
             <Row>
               <Col md="3">
-                <Form.Group>
-                  <Form.Label>Received</Form.Label>
-                  <Form.Control
-                    required
-                    name="received"
-                    onChange={handleChange}
-                    value={state.received}
-                    min="1"
-                    type="text"
-                  />
-                </Form.Group>
+                <p className="text-center">Received</p>
               </Col>
               <Col>
                 <Form.Group>
@@ -125,7 +126,17 @@ export default function GenerateInvoice() {
                   <Form.Label>Amount</Form.Label>
                   <InputGroup>
                     <InputGroup.Prepend>
-                      <InputGroup.Text>$</InputGroup.Text>
+                      <InputGroup.Text>
+                        <select
+                          name="currency"
+                          onChange={handleChange}
+                          value={state.currency}
+                          className="no-decoration"
+                        >
+                          <option>ARS</option>
+                          <option>USD</option>
+                        </select>
+                      </InputGroup.Text>
                     </InputGroup.Prepend>
                     <Form.Control
                       required
@@ -142,10 +153,10 @@ export default function GenerateInvoice() {
                 <Form.Group>
                   <Form.Label>Sign</Form.Label>
                   <Form.Control
-                    required
+                    disabled
                     name="sign"
                     onChange={handleChange}
-                    value={state.sign}
+                    value="Al guardar se generara el código QR"
                     type="text"
                   />
                 </Form.Group>

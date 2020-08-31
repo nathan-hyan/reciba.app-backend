@@ -5,7 +5,7 @@
   "main": "index.ts",
   "scripts": {
     "client": "cd client && npm start",
-    "server": "nodemon src/index.ts",
+    "server": "nodemon src/index.js",
     "start": "node src/index.ts",
     "dev": "concurrently 'npm:client' 'npm:server'",
     "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client"
