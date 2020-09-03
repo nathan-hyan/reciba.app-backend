@@ -1,13 +1,25 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Container, Form, Button, Row, Col, InputGroup } from "react-bootstrap";
-import { faSave, faTimesCircle } from "@fortawesome/free-solid-svg-icons";
+import {
+  faSave,
+  faTimesCircle,
+  faQrcode,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { notify } from "react-notify-toast";
 import invoice from "../../Interfaces/invoice";
 import Axios from "axios";
 import { useHistory } from "react-router-dom";
+import { v4 as uuidv4 } from "uuid";
+
+// Socket.io stuff
+import io from "socket.io-client";
+import ShowQRCodeModal from "./ShowQRCodeModal";
+const ENDPOINT = "http://192.168.100.6:8000";
+const socket = io.connect(ENDPOINT, { transports: ["websocket"] });
 
 export default function GenerateInvoice() {
+  //Setting up state
   const [state, setState] = useState<invoice>({
     invoiceNumber: 1,
     date: "",
@@ -15,19 +27,38 @@ export default function GenerateInvoice() {
     amountText: "",
     amount: 0,
     concept: "",
-    sign: "",
     currency: "ARS",
   });
+  const [validated, setValidated] = useState(false);
+  const [showQRCodeModal, setShowQRCodeModal] = useState(false);
 
+  // Setting up history
   const history = useHistory();
 
-  const [validated, setValidated] = useState(false);
+  // Generate randomId and assign it to IO.Socket
+  const randomId = uuidv4();
+  socket.emit("join", randomId);
 
+  /**
+   * Opens and closes QRCode modal
+   */
+  const toggleShowQRCodeModal = () => {
+    setShowQRCodeModal((i) => !i);
+  };
+
+  /**
+   * Keeps track of inputs and saves them to state
+   * @param e Input
+   */
   const handleChange = (e: { target: { name: any; value: any } }) => {
     let { name, value } = e.target;
     setState({ ...state, [name]: value });
   };
 
+  /**
+   * Saves invoice to database
+   * @param e Form
+   */
   const handleSubmit = (e: {
     preventDefault: () => void;
     currentTarget?: any;
@@ -50,15 +81,26 @@ export default function GenerateInvoice() {
     setValidated(true);
   };
 
-  console.log(state);
+  /**
+   * Checks everytime there's an update on Socket
+   */
+  useEffect(() => {
+    socket.on("sign", (data: any) => {
+      setState({ ...state, sign: data });
+    });
+  });
 
   return (
     <Container>
+      <ShowQRCodeModal
+        show={showQRCodeModal}
+        onHide={toggleShowQRCodeModal}
+        id={randomId}
+      />
       <Row className="h-100-minus align-items-center">
         <Col className="bg-light p-3 shadow rounded">
           <Form noValidate validated={validated} onSubmit={handleSubmit}>
             <Row>
-              <Col md="6" />
               <Col>
                 <Form.Group>
                   <Form.Label>Date</Form.Label>
@@ -149,21 +191,18 @@ export default function GenerateInvoice() {
                   </InputGroup>
                 </Form.Group>
               </Col>
+              <Col className="text-right">
+                <p className="lead">Firma</p>
+              </Col>
               <Col>
-                <Form.Group>
-                  <Form.Label>Sign</Form.Label>
-                  <Form.Control
-                    disabled
-                    name="sign"
-                    onChange={handleChange}
-                    value="Al guardar se generara el código QR"
-                    type="text"
-                  />
-                </Form.Group>
+                <img height="100" src={state.sign} />
               </Col>
             </Row>
             <Row>
               <Col className="text-right">
+                <Button variant="info" onClick={toggleShowQRCodeModal} className="mr-3">
+                  <FontAwesomeIcon icon={faQrcode} /> Mostrar QR para firmar
+                </Button>
                 <Button variant="secondary" className="mr-3">
                   <FontAwesomeIcon icon={faTimesCircle} /> Cancel
                 </Button>

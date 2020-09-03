@@ -16,7 +16,7 @@ import Navigation from "./Layout/Navigation";
 import GenerateInvoice from "./Pages/invoice/GenerateInvoice";
 import DisplayInvoice from "./Pages/invoice/DisplayInvoice";
 import Signature from "./Pages/invoice/Signature";
-import SignatureCode from "./Pages/invoice/SignatureCode";
+import ShowQRCodeModal from "./Pages/invoice/ShowQRCodeModal";
 
 function App() {
   return (
@@ -34,7 +34,7 @@ function App() {
             {/* Invoice */}
             <Route path="/invoice/generate" component={GenerateInvoice} />
             <Route path="/invoice/display/:id" component={DisplayInvoice} />
-            <Route path="/invoice/code/:id" component={SignatureCode} />
+            <Route path="/invoice/code/:id" component={ShowQRCodeModal} />
 
             {/* Signature pad */}
             <Route path="/signature/:id" component={Signature} />

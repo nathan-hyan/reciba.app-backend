@@ -1,35 +1,21 @@
 import React, { useRef } from "react";
-import Axios from "axios";
 import { Container, Button, Row, Col } from "react-bootstrap";
 import { useParams, useHistory } from "react-router-dom";
-import { notify } from "react-notify-toast";
+import io from "socket.io-client";
 const SignaturePad = require("react-signature-pad");
+const ENDPOINT = "http://192.168.100.6:8000";
+const socket = io.connect(ENDPOINT, {
+  transports: ["websocket"],
+});
 
 export default function Signature() {
   const signatureRef: any = useRef();
   const { id } = useParams();
-  const history = useHistory();
+  socket.emit("join", id);
 
-  const saveSignature = () => {
-    Axios.put(`/api/invoice/addSignature/${id}`, {
-      sign: signatureRef.current.toDataURL(),
-    })
-      .then((response) => {
-        let { message, success } = response.data;
-
-        if (success) {
-          notify.show(message, "success");
-          history.push(`/invoice/display/${id}`);
-        } else {
-          notify.show("Ocurrió un error, reintente por favor", "error");
-        }
-      })
-      .catch((err) => {
-        if (err.response.data) {
-          notify.show(err.response.data.message, "error");
-        }
-        notify.show(err.message, "error");
-      });
+  const sendSign = () => {
+    console.log("hay shit");
+    socket.emit("sign", signatureRef.current.toDataURL());
   };
 
   return (
@@ -43,7 +29,11 @@ export default function Signature() {
         </Col>
       </Row>
       <Row className="my-5">
-        <Col className="bg-white shadow rounded">
+        <Col
+          onTouchEnd={sendSign}
+          onMouseUp={sendSign}
+          className="bg-white shadow rounded"
+        >
           <SignaturePad ref={signatureRef} />
         </Col>
       </Row>
@@ -52,14 +42,21 @@ export default function Signature() {
           <Button
             className="w-100"
             variant="danger"
-            onClick={() => signatureRef.current.clear()}
+            onClick={() => {
+              signatureRef.current.clear();
+              sendSign();
+            }}
           >
             Reiniciar Firma
           </Button>
         </Col>
 
         <Col>
-          <Button className="w-100" variant="primary" onClick={saveSignature}>
+          <Button
+            className="w-100"
+            variant="primary"
+            onClick={() => console.log("ey")}
+          >
             Aceptar
           </Button>
         </Col>

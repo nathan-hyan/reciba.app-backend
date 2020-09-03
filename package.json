@@ -34,6 +34,7 @@
     "@types/react-dom": "^16.9.8",
     "@types/react-notify-toast": "^0.5.2",
     "@types/react-router-dom": "^5.1.5",
+    "@types/uuid": "^8.3.0",
     "bcryptjs": "^2.4.3",
     "concurrently": "^5.3.0",
     "dotenv": "^8.2.0",
@@ -41,6 +42,7 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.9.28",
     "nodemailer": "^6.4.11",
+    "socket.io": "^2.3.0",
     "ts-node": "^9.0.0",
     "typescript": "^3.9.7"
   },
