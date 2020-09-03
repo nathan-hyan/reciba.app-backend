@@ -15,7 +15,10 @@ import { v4 as uuidv4 } from "uuid";
 // Socket.io stuff
 import io from "socket.io-client";
 import ShowQRCodeModal from "./ShowQRCodeModal";
-const ENDPOINT = "http://192.168.100.6:8000";
+const ENDPOINT =
+  process.env.NODE_ENV !== "production"
+    ? "http://192.168.100.6:8000"
+    : "https://billsapp.herokuapp.com/";
 const socket = io.connect(ENDPOINT, { transports: ["websocket"] });
 
 export default function GenerateInvoice() {

@@ -3,7 +3,10 @@ import { Container, Button, Row, Col } from "react-bootstrap";
 import { useParams, useHistory } from "react-router-dom";
 import io from "socket.io-client";
 const SignaturePad = require("react-signature-pad");
-const ENDPOINT = "http://192.168.100.6:8000";
+const ENDPOINT =
+  process.env.NODE_ENV !== "production"
+    ? "http://192.168.100.6:8000"
+    : "https://billsapp.herokuapp.com/";
 const socket = io.connect(ENDPOINT, {
   transports: ["websocket"],
 });
