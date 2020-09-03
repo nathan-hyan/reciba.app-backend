@@ -31,13 +31,10 @@ export default function GenerateInvoice() {
   });
   const [validated, setValidated] = useState(false);
   const [showQRCodeModal, setShowQRCodeModal] = useState(false);
+  const [randomId, setRandomId] = useState<any>();
 
   // Setting up history
   const history = useHistory();
-
-  // Generate randomId and assign it to IO.Socket
-  const randomId = uuidv4();
-  socket.emit("join", randomId);
 
   /**
    * Opens and closes QRCode modal
@@ -89,6 +86,16 @@ export default function GenerateInvoice() {
       setState({ ...state, sign: data });
     });
   });
+
+  useEffect(() => {
+    // Generate randomId and assign it to IO.Socket
+    if (!randomId) {
+      setRandomId(uuidv4);
+    }
+    if (randomId) {
+      socket.emit("join", randomId);
+    }
+  }, [randomId]);
 
   return (
     <Container>
@@ -200,7 +207,11 @@ export default function GenerateInvoice() {
             </Row>
             <Row>
               <Col className="text-right">
-                <Button variant="info" onClick={toggleShowQRCodeModal} className="mr-3">
+                <Button
+                  variant="info"
+                  onClick={toggleShowQRCodeModal}
+                  className="mr-3"
+                >
                   <FontAwesomeIcon icon={faQrcode} /> Mostrar QR para firmar
                 </Button>
                 <Button variant="secondary" className="mr-3">
