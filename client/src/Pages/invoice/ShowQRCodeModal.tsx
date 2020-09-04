@@ -1,17 +1,23 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import QRCode from "qrcode.react";
 import { Row, Col, Button, Modal } from "react-bootstrap";
 import "./QRCode.css";
+import { IdGeneration } from "../../Context/IdGeneration";
 
 export default function ShowQRCodeModal({
   show = true,
   onHide = () => (show = !show),
-  id,
 }: {
   show: boolean;
   onHide: () => void;
-  id: string;
 }) {
+  const { generateId, currentId } = useContext(IdGeneration);
+
+  useEffect(() => {
+    generateId();
+    console.log(currentId);
+  }, []);
+
   return (
     <Modal size="xl" show={show} onHide={onHide}>
       <Modal.Body>
@@ -28,7 +34,7 @@ export default function ShowQRCodeModal({
           <Col className="bg-white shadow rounded p-3" md={3}>
             <QRCode
               size={200}
-              value={`https://billsapp.herokuapp.com/signature/${id}`}
+              value={`https://billsapp.herokuapp.com/signature/${currentId}`}
             />
           </Col>
           <Col />

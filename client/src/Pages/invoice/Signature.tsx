@@ -14,7 +14,6 @@ const socket = io.connect(ENDPOINT, {
 export default function Signature() {
   const signatureRef: any = useRef();
   const { id } = useParams();
-  socket.emit("join", id);
 
   const sendSign = () => {
     console.log("hay shit");

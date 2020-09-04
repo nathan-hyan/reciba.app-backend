@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Container, Form, Button, Row, Col, InputGroup } from "react-bootstrap";
 import {
   faSave,
@@ -10,11 +10,11 @@ import { notify } from "react-notify-toast";
 import invoice from "../../Interfaces/invoice";
 import Axios from "axios";
 import { useHistory } from "react-router-dom";
-import { v4 as uuidv4 } from "uuid";
 
 // Socket.io stuff
 import io from "socket.io-client";
 import ShowQRCodeModal from "./ShowQRCodeModal";
+import { IdGeneration } from "../../Context/IdGeneration";
 const ENDPOINT =
   process.env.NODE_ENV !== "production"
     ? "http://192.168.100.6:8000"
@@ -22,6 +22,9 @@ const ENDPOINT =
 const socket = io.connect(ENDPOINT, { transports: ["websocket"] });
 
 export default function GenerateInvoice() {
+  // Get uniqueId for this session
+  const { generateId, currentId } = useContext(IdGeneration);
+
   //Setting up state
   const [state, setState] = useState<invoice>({
     invoiceNumber: 1,
@@ -34,7 +37,6 @@ export default function GenerateInvoice() {
   });
   const [validated, setValidated] = useState(false);
   const [showQRCodeModal, setShowQRCodeModal] = useState(false);
-  const [randomId, setRandomId] = useState<any>();
 
   // Setting up history
   const history = useHistory();
@@ -91,22 +93,15 @@ export default function GenerateInvoice() {
   });
 
   useEffect(() => {
-    // Generate randomId and assign it to IO.Socket
-    if (!randomId) {
-      setRandomId(uuidv4);
+    // Generate currentId and assign it to IO.Socket
+    if (currentId !== "") {
+      socket.emit("join", currentId);
     }
-    if (randomId) {
-      socket.emit("join", randomId);
-    }
-  }, [randomId]);
+  }, [currentId]);
 
   return (
     <Container>
-      <ShowQRCodeModal
-        show={showQRCodeModal}
-        onHide={toggleShowQRCodeModal}
-        id={randomId}
-      />
+      <ShowQRCodeModal show={showQRCodeModal} onHide={toggleShowQRCodeModal} />
       <Row className="h-100-minus align-items-center">
         <Col className="bg-light p-3 shadow rounded">
           <Form noValidate validated={validated} onSubmit={handleSubmit}>
