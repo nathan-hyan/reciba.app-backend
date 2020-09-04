@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useEffect } from "react";
 import { Container, Button, Row, Col } from "react-bootstrap";
 import { useParams, useHistory } from "react-router-dom";
 import io from "socket.io-client";
@@ -14,6 +14,10 @@ const socket = io.connect(ENDPOINT, {
 export default function Signature() {
   const signatureRef: any = useRef();
   const { id } = useParams();
+
+  useEffect(() => {
+    socket.emit("join", id);
+  }, []);
 
   const sendSign = () => {
     console.log("hay shit");

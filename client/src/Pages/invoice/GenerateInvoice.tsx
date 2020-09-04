@@ -23,7 +23,7 @@ const socket = io.connect(ENDPOINT, { transports: ["websocket"] });
 
 export default function GenerateInvoice() {
   // Get uniqueId for this session
-  const { generateId, currentId } = useContext(IdGeneration);
+  const { currentId } = useContext(IdGeneration);
 
   //Setting up state
   const [state, setState] = useState<invoice>({
