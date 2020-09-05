@@ -23,7 +23,7 @@ const socket = io.connect(ENDPOINT, { transports: ["websocket"] });
 
 export default function GenerateInvoice() {
   // Get uniqueId for this session
-  const { currentId } = useContext(IdGeneration);
+  const { currentId, generateId } = useContext(IdGeneration);
 
   //Setting up state
   const [state, setState] = useState<invoice>({
@@ -45,6 +45,11 @@ export default function GenerateInvoice() {
    * Opens and closes QRCode modal
    */
   const toggleShowQRCodeModal = () => {
+    setShowQRCodeModal((i) => !i);
+  };
+
+  const showQRCodeModalAndGenerateCode = () => {
+    generateId();
     setShowQRCodeModal((i) => !i);
   };
 
@@ -207,7 +212,7 @@ export default function GenerateInvoice() {
               <Col className="text-right">
                 <Button
                   variant="info"
-                  onClick={toggleShowQRCodeModal}
+                  onClick={showQRCodeModalAndGenerateCode}
                   className="mr-3"
                 >
                   <FontAwesomeIcon icon={faQrcode} /> Mostrar QR para firmar
