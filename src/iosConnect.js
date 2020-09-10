@@ -18,8 +18,8 @@ function iosConnect(server) {
       console.log(`${socket.id} joined ${room}`);
 
       socket.on("sign", (signature) => {
-        console.log(`${socket} sended signature to ${room}`);
-        io.emit("sign", signature);
+        console.log(`${socket.id} sended signature to ${room}`);
+        io.to(room).emit("sign", signature);
       });
     });
   });

@@ -48,8 +48,9 @@ export default function GenerateInvoice() {
     setShowQRCodeModal((i) => !i);
   };
 
-  const showQRCodeModalAndGenerateCode = () => {
-    generateId();
+  const showQRCodeModalAndGenerateCode = async () => {
+    await generateId();
+    socket.emit("join", currentId);
     setShowQRCodeModal((i) => !i);
   };
 
