@@ -133,7 +133,7 @@ export default function GenerateInvoice() {
                     required
                     name="date"
                     onChange={handleChange}
-                    value={state.date}
+                    value={state.date.toString()}
                     type="date"
                   />
                   <Form.Control.Feedback type="invalid">
