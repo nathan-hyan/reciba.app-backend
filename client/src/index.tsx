@@ -7,10 +7,6 @@ import Notifications from "react-notify-toast";
 import "./styles/customBootstrap.css";
 import "./styles/main.css";
 
-import "moment/locale/es";
-import moment from "moment";
-moment.locale("es");
-
 ReactDOM.render(
   <React.StrictMode>
     <BrowserRouter>

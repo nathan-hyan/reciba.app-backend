@@ -7,14 +7,14 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { notify } from "react-notify-toast";
-import invoice from "../../Interfaces/invoice";
+import invoice from "../../../Interfaces/invoice";
 import Axios from "axios";
 import { useHistory } from "react-router-dom";
 
 // Socket.io stuff
 import io from "socket.io-client";
-import ShowQRCodeModal from "./ShowQRCodeModal";
-import { IdGeneration } from "../../Context/IdGeneration";
+import ShowQRCodeModal from "../qr/ShowQRCodeModal";
+import { IdGeneration } from "../../../Context/IdGeneration";
 const ENDPOINT =
   process.env.NODE_ENV !== "production"
     ? "http://192.168.100.6:8000"
@@ -28,7 +28,7 @@ export default function GenerateInvoice() {
   //Setting up state
   const [state, setState] = useState<invoice>({
     invoiceNumber: 1,
-    date: "",
+    date: new Date(),
     from: "",
     amountText: "",
     amount: 0,
@@ -96,6 +96,13 @@ export default function GenerateInvoice() {
     socket.on("sign", (data: any) => {
       setState({ ...state, sign: data });
     });
+
+    if (showQRCodeModal) {
+      socket.on("close", () => {
+        notify.show("Teléfono conectado", "success");
+        setShowQRCodeModal(false);
+      });
+    }
   });
 
   useEffect(() => {
@@ -206,7 +213,7 @@ export default function GenerateInvoice() {
                 <p className="lead">Firma</p>
               </Col>
               <Col>
-                <img height="100" src={state.sign} />
+                <img height="100" src={state.sign} alt="signature" />
               </Col>
             </Row>
             <Row>

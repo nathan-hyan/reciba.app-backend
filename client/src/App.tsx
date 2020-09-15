@@ -4,20 +4,19 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
 // Import context
 import UserContextProvider from "./Context/UserContext";
-import IdGeneration from "./Context/IdGeneration";
 
 // Import pages
 import Home from "./Pages/Home";
-import Signup from "./Pages/Signup";
-import Login from "./Pages/Login";
-import Logout from "./Pages/Logout";
+import Signup from "./Pages/auth/Signup";
+import Login from "./Pages/auth/Login";
+import Logout from "./Pages/auth/Logout";
 
 // Import layout
 import Navigation from "./Layout/Navigation";
-import GenerateInvoice from "./Pages/invoice/GenerateInvoice";
-import DisplayInvoice from "./Pages/invoice/DisplayInvoice";
-import Signature from "./Pages/invoice/Signature";
-import ShowQRCodeModal from "./Pages/invoice/ShowQRCodeModal";
+import GenerateInvoice from "./Pages/invoice/generate/GenerateInvoice";
+import DisplayInvoice from "./Pages/invoice/display/DisplayInvoice";
+import Signature from "./Pages/invoice/generate/Signature";
+import ShowQRCodeModal from "./Pages/invoice/qr/ShowQRCodeModal";
 import IdGenerationProvider from "./Context/IdGeneration";
 
 function App() {

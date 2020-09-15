@@ -16,7 +16,6 @@ export default function IdGenerationProvider(props: {
    */
   const generateId = () => {
     const newId = uuidv4();
-    console.log(newId);
     setCurrentId(newId);
   };
 

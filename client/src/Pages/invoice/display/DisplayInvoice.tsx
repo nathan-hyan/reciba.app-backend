@@ -1,17 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { Container, Row, Col } from "react-bootstrap";
-import moment from "moment";
-import invoice from "../../Interfaces/invoice";
+import invoice from "../../../Interfaces/invoice";
 import Axios from "axios";
 import { useParams } from "react-router-dom";
 
 export default function DisplayInvoice() {
-  const { id } = useParams();
+  const { id } = useParams<any>();
 
   const [state, setState] = useState<invoice>({
     invoiceNumber: 1,
     logo: "",
-    date: "",
+    date: new Date(),
     from: "",
     amountText: "",
     amount: 0,
@@ -24,6 +23,7 @@ export default function DisplayInvoice() {
     Axios.get(`/api/invoice/single/${id}`).then(({ data }) => {
       setState({ ...data.data });
     });
+    //eslint-disable-next-line
   }, []);
 
   return (
@@ -65,7 +65,8 @@ export default function DisplayInvoice() {
             <Col className="text-center">
               <p className="my-0">
                 <strong>Fecha: </strong>
-                {moment(state.date).utc().format("L")}
+                {/* {moment(state.date).utc().format("L")} */}
+                {new Intl.DateTimeFormat("es-AR").format(state.date)}
               </p>
             </Col>
           </Row>
@@ -113,7 +114,7 @@ export default function DisplayInvoice() {
             <Col md={6} className="bg-light">
               <p className="my-2">
                 <strong>Recibo por: </strong>
-                <img src={state.sign} height="120" />
+                <img src={state.sign} height="120" alt="signature" />
               </p>
             </Col>
           </Row>

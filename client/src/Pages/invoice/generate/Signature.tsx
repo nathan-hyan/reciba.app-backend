@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from "react";
 import { Container, Button, Row, Col } from "react-bootstrap";
-import { useParams, useHistory } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import io from "socket.io-client";
 const SignaturePad = require("react-signature-pad");
 const ENDPOINT =
@@ -13,14 +13,15 @@ const socket = io.connect(ENDPOINT, {
 
 export default function Signature() {
   const signatureRef: any = useRef();
-  const { id } = useParams();
+  const { id } = useParams<any>();
 
   useEffect(() => {
     socket.emit("join", id);
+    socket.emit("close", false);
+    //eslint-disable-next-line
   }, []);
 
   const sendSign = () => {
-    console.log("hay shit");
     socket.emit("sign", signatureRef.current.toDataURL());
   };
 
