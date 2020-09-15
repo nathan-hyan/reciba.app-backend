@@ -22,13 +22,15 @@ const ENDPOINT =
 const socket = io.connect(ENDPOINT, { transports: ["websocket"] });
 
 export default function GenerateInvoice() {
+  var date = new Date().toISOString().substr(0, 10);
+
   // Get uniqueId for this session
   const { currentId, generateId } = useContext(IdGeneration);
 
   //Setting up state
   const [state, setState] = useState<invoice>({
     invoiceNumber: 1,
-    date: new Date(),
+    date,
     from: "",
     amountText: "",
     amount: 0,
@@ -75,12 +77,17 @@ export default function GenerateInvoice() {
     e.preventDefault();
     e.stopPropagation();
     let { currentTarget } = e;
+    if (!state.sign) {
+      notify.show("Se necesita la firma para continuar", "error");
+      return null;
+    }
+
     if (currentTarget.checkValidity() === false) {
       notify.show("Please verify the form and try again", "error");
     } else {
       Axios.post(`/api/invoice/`, { ...state }).then(({ data }) => {
         if (data.id) {
-          history.push(`/invoice/code/${data.id}`);
+          history.push(`/invoice/display/${data.id}`);
         }
         notify.show(data.message, "success");
       });
@@ -213,7 +220,9 @@ export default function GenerateInvoice() {
                 <p className="lead">Firma</p>
               </Col>
               <Col>
-                <img height="100" src={state.sign} alt="signature" />
+                {state.sign ? (
+                  <img height="100" src={state.sign} alt="signature" />
+                ) : null}
               </Col>
             </Row>
             <Row>

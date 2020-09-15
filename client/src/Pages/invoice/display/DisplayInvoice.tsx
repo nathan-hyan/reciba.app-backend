@@ -1,10 +1,15 @@
-import React, { useState, useEffect } from "react";
-import { Container, Row, Col } from "react-bootstrap";
+import React, { useState, useEffect, useRef } from "react";
+import { Container, Row, Col, Button } from "react-bootstrap";
 import invoice from "../../../Interfaces/invoice";
 import Axios from "axios";
 import { useParams } from "react-router-dom";
+import { PDFExport, savePDF } from "@progress/kendo-react-pdf";
+import ReactDOM from "react-dom";
+import { notify } from "react-notify-toast";
+import Bill from "./Bill";
 
 export default function DisplayInvoice() {
+  const invoice = useRef<any>(<div />);
   const { id } = useParams<any>();
 
   const [state, setState] = useState<invoice>({
@@ -21,105 +26,48 @@ export default function DisplayInvoice() {
 
   useEffect(() => {
     Axios.get(`/api/invoice/single/${id}`).then(({ data }) => {
-      setState({ ...data.data });
+      let dateWithoutTime = data.data.date.slice(0, 10);
+      let dateArray = dateWithoutTime.split("-");
+      let year = dateArray[0];
+      let month = parseInt(dateArray[1], 10) - 1;
+      let date = dateArray[2];
+      setState({ ...data.data, date: new Date(year, month, date) });
     });
     //eslint-disable-next-line
   }, []);
 
+  const exportPDFToFile = () => {
+    savePDF(invoice.current, {
+      paperSize: "A4",
+      fileName: `Invoice - ${Intl.DateTimeFormat(navigator.language, {
+        month: "numeric",
+        day: "numeric",
+        year: "numeric",
+      }).format(new Date(state.date))} - ${id}`,
+      landscape: true,
+      scale: 0.75,
+    });
+  };
+
   return (
     <Container>
-      <Row className="py-5 bg-white">
-        <Col md={1}>
-          <p
-            className="text-muted p-0 mb-0 text-center"
-            style={{
-              height: 64,
-              marginTop: 150,
-              width: 109,
-              paddingLeft: 0,
-            }}
+      <Row className="my-5">
+        <Col className="p-3 bg-light text-center shadow rounded">
+          <Button className="mx-2" onClick={exportPDFToFile}>
+            Download PDF
+          </Button>
+          <Button
+            onClick={() => notify.show("Not yet implemented", "error")}
+            className="mx-2"
           >
-            Recibo Original
-          </p>
-        </Col>
-
-        <Col className="px-5">
-          <Row className="border-bottom mt-3 pb-3">
-            <Col>
-              {state.logo ? (
-                <>
-                  <img src={state.logo} alt="RollingCode School" height="50" />
-                  <p className="text-monospace">
-                    Recibo N°: {state.invoiceNumber}
-                  </p>
-                </>
-              ) : (
-                <p className="text-monospace">
-                  Recibo N°: {state.invoiceNumber}
-                </p>
-              )}
-            </Col>
-
-            <Col md="2"></Col>
-
-            <Col className="text-center">
-              <p className="my-0">
-                <strong>Fecha: </strong>
-                {/* {moment(state.date).utc().format("L")} */}
-                {new Intl.DateTimeFormat("es-AR").format(state.date)}
-              </p>
-            </Col>
-          </Row>
-
-          <Row>
-            <Col>
-              <Row className="bg-light my-3">
-                <Col md={3}>
-                  <p className="text-center my-2">
-                    <strong>Recibí</strong>
-                  </p>
-                </Col>
-                <Col>
-                  <p className="my-2">
-                    <strong>De: </strong>
-                    {state.from}
-                  </p>
-                </Col>
-              </Row>
-
-              <Row className="bg-light my-3">
-                <Col>
-                  <p className="my-2">
-                    <strong>La cantidad de: </strong>
-                    {state.amountText}
-                  </p>
-                </Col>
-              </Row>
-              <Row className="bg-light my-3">
-                <Col>
-                  <p className="my-2">
-                    <strong>En concepto de: </strong> {state.concept}
-                  </p>
-                </Col>
-              </Row>
-            </Col>
-          </Row>
-          <Row>
-            <Col md={2} className="bg-light">
-              <p className="my-2">
-                <strong>Son: </strong> {state.currency} ${state.amount}
-              </p>
-            </Col>
-            <Col />
-            <Col md={6} className="bg-light">
-              <p className="my-2">
-                <strong>Recibo por: </strong>
-                <img src={state.sign} height="120" alt="signature" />
-              </p>
-            </Col>
-          </Row>
+            Send copy via E-mail
+          </Button>
         </Col>
       </Row>
+      <div ref={invoice}>
+        <Bill data={state} isOriginal />
+        <Bill data={state} />
+      </div>
     </Container>
   );
 }

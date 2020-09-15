@@ -1,7 +1,7 @@
 export default interface invoice {
   invoiceNumber: number;
   logo?: string;
-  date: Date | number;
+  date: Date | string;
   from: string;
   amountText: string;
   amount: number;
