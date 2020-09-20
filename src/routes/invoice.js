@@ -1,13 +1,31 @@
 const router = require("express").Router();
 const Invoice = require("../models/Invoice");
+const GlobalCounter = require("../models/GlobalCounter");
+
+router.post("/createGlobalCounter", (req, res) => {
+  new GlobalCounter({ counter: 0 }).save().then((i) => {
+    res.send(i);
+  });
+});
 
 router.post("/", async (req, res) => {
+  let { counter } = await GlobalCounter.findOne({
+    _id: "5f67b4f0dab3807105ed751b",
+  });
+
   const createdInvoice = new Invoice({
     ...req.body,
+    invoiceNumber: counter,
   });
 
   try {
     const response = await createdInvoice.save();
+    await GlobalCounter.findOneAndUpdate(
+      { _id: "5f67b4f0dab3807105ed751b" },
+      { counter: ++counter }
+    );
+
+    console.log("yes?");
     res.send({ success: true, message: "Invoice created", id: response._id });
   } catch (err) {
     res

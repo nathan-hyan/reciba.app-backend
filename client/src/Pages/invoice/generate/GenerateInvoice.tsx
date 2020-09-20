@@ -85,12 +85,19 @@ export default function GenerateInvoice() {
     if (currentTarget.checkValidity() === false) {
       notify.show("Please verify the form and try again", "error");
     } else {
-      Axios.post(`/api/invoice/`, { ...state }).then(({ data }) => {
-        if (data.id) {
-          history.push(`/invoice/display/${data.id}/${currentId}`);
-        }
-        notify.show(data.message, "success");
-      });
+      Axios.post(`/api/invoice/`, { ...state })
+        .then(({ data }) => {
+          if (data.id) {
+            history.push(`/invoice/display/${data.id}/${currentId}`);
+          }
+          notify.show(data.message, "success");
+        })
+        .catch((err) => {
+          notify.show(
+            "Ocurrió un error creando el comprobante, por favor reintente",
+            "error"
+          );
+        });
     }
 
     setValidated(true);
