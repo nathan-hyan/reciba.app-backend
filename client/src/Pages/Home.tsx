@@ -18,7 +18,7 @@ export default function Home() {
 
           <p className="lead">
             ¡Ahora podés hacer todo digital! Creá, guardá, enviá comprobantes
-            desde tu casa y envialos sin necesidad de contacto físico.
+            desde tu casa sin necesidad de contacto físico.
           </p>
 
           <Link to="/invoice/generate">
