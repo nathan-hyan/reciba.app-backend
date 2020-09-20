@@ -1,3 +1,8 @@
+import {
+  faArrowAltCircleDown,
+  faTimesCircle,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useRef, useState, useEffect } from "react";
 import { Container, Button, Row, Col } from "react-bootstrap";
 import { useParams } from "react-router-dom";
@@ -61,7 +66,7 @@ export default function Signature() {
               sendSign();
             }}
           >
-            Reiniciar Firma
+            <FontAwesomeIcon icon={faTimesCircle} /> Reiniciar Firma
           </Button>
         </Col>
       </Row>
@@ -74,7 +79,8 @@ export default function Signature() {
           </p>
           <a download="Comprobante.pdf" href={PDFFile}>
             <Button className={PDFFile ? "d-block w-100" : "d-none"}>
-              Descargar comprobante
+              <FontAwesomeIcon icon={faArrowAltCircleDown} /> Descargar
+              comprobante
             </Button>
           </a>
         </Col>

@@ -22,35 +22,37 @@ export default function Navigation() {
         variant="dark"
         expand="lg"
       >
-        <Navbar.Brand href="/">Bills App</Navbar.Brand>
+        <Navbar.Brand href="/">Proyecto Bills</Navbar.Brand>
         <Navbar.Toggle />
         <Navbar.Collapse>
           <Nav className="mr-auto">
             <Nav.Link href="/">
-              <FontAwesomeIcon icon={faHome} /> Home
+              <FontAwesomeIcon icon={faHome} /> Principal
             </Nav.Link>
           </Nav>
           <Nav className="ml-auto">
             <NavDropdown
-              title={`Signed in as ${user.isLoggedIn ? user.name : "Guest"}`}
+              title={`Usuario actual: ${
+                user.isLoggedIn ? user.name : "invitado"
+              }`}
               id="collasible-nav-dropdown"
             >
               {!user.isLoggedIn ? (
                 <div>
                   <NavDropdown.Item href="/login">
-                    <FontAwesomeIcon icon={faUserCheck} /> Login
+                    <FontAwesomeIcon icon={faUserCheck} /> Iniciar sesión
                   </NavDropdown.Item>
                   <NavDropdown.Item href="/signup">
-                    <FontAwesomeIcon icon={faUserPlus} /> Signup
+                    <FontAwesomeIcon icon={faUserPlus} /> Crear usuario
                   </NavDropdown.Item>
                 </div>
               ) : (
                 <div>
                   <NavDropdown.Item href="/login">
-                    <FontAwesomeIcon icon={faUserEdit} /> Profile
+                    <FontAwesomeIcon icon={faUserEdit} /> Perfil
                   </NavDropdown.Item>
                   <NavDropdown.Item href="/signup">
-                    <FontAwesomeIcon icon={faDoorOpen} /> Log off
+                    <FontAwesomeIcon icon={faDoorOpen} /> Cerrar sesión
                   </NavDropdown.Item>
                 </div>
               )}

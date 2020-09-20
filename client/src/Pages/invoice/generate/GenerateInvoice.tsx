@@ -128,7 +128,7 @@ export default function GenerateInvoice() {
             <Row>
               <Col>
                 <Form.Group>
-                  <Form.Label>Date</Form.Label>
+                  <Form.Label>Fecha</Form.Label>
                   <Form.Control
                     required
                     name="date"
@@ -137,18 +137,18 @@ export default function GenerateInvoice() {
                     type="date"
                   />
                   <Form.Control.Feedback type="invalid">
-                    Date is required
+                    La fecha es necesaria
                   </Form.Control.Feedback>
                 </Form.Group>
               </Col>
             </Row>
             <Row>
               <Col md="3">
-                <p className="text-center">Received</p>
+                <p className="text-center">Recibo</p>
               </Col>
               <Col>
                 <Form.Group>
-                  <Form.Label>From</Form.Label>
+                  <Form.Label>De</Form.Label>
                   <Form.Control
                     required
                     name="from"
@@ -162,7 +162,7 @@ export default function GenerateInvoice() {
             <Row>
               <Col>
                 <Form.Group>
-                  <Form.Label>Quantity</Form.Label>
+                  <Form.Label>Cantidad</Form.Label>
                   <Form.Control
                     required
                     name="amountText"
@@ -176,7 +176,7 @@ export default function GenerateInvoice() {
             <Row>
               <Col>
                 <Form.Group>
-                  <Form.Label>In concept of</Form.Label>
+                  <Form.Label>En concepto de</Form.Label>
                   <Form.Control
                     required
                     name="concept"
@@ -190,7 +190,7 @@ export default function GenerateInvoice() {
             <Row>
               <Col sm={12} md={3}>
                 <Form.Group>
-                  <Form.Label>Amount</Form.Label>
+                  <Form.Label>Cantidad</Form.Label>
                   <InputGroup>
                     <InputGroup.Prepend>
                       <InputGroup.Text>
@@ -234,11 +234,17 @@ export default function GenerateInvoice() {
                 >
                   <FontAwesomeIcon icon={faQrcode} /> Mostrar QR para firmar
                 </Button>
-                <Button variant="secondary" className="mr-3">
-                  <FontAwesomeIcon icon={faTimesCircle} /> Cancel
+                <Button
+                  variant="secondary"
+                  className="mr-3"
+                  onClick={() => {
+                    history.push("/");
+                  }}
+                >
+                  <FontAwesomeIcon icon={faTimesCircle} /> Cancelar
                 </Button>
                 <Button variant="primary" type="submit">
-                  <FontAwesomeIcon icon={faSave} /> Submit
+                  <FontAwesomeIcon icon={faSave} /> Guardar
                 </Button>
               </Col>
             </Row>

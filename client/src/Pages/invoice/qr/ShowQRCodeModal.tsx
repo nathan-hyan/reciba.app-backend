@@ -3,6 +3,8 @@ import QRCode from "qrcode.react";
 import { Row, Col, Button, Modal } from "react-bootstrap";
 import "./QRCode.css";
 import { IdGeneration } from "../../../Context/IdGeneration";
+import { faTimesCircle } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export default function ShowQRCodeModal({
   show = true,
@@ -45,7 +47,9 @@ export default function ShowQRCodeModal({
             <p className="lead">
               Al finalizar la firma, presionar para continuar
             </p>
-            <Button onClick={onHide}>Cerrar</Button>
+            <Button onClick={onHide}>
+              <FontAwesomeIcon icon={faTimesCircle} /> Cerrar
+            </Button>
           </Col>
         </Row>
       </Modal.Body>

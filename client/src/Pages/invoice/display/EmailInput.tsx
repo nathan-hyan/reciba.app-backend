@@ -1,3 +1,5 @@
+import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import { Col, Form, Button } from "react-bootstrap";
 
@@ -29,7 +31,7 @@ export default function EmailInput({
           </Form.Control.Feedback>
         </Form.Group>
         <Button variant="primary" type="submit">
-          Enviar
+          <FontAwesomeIcon icon={faPaperPlane} /> Enviar
         </Button>
       </Form>
     </Col>
