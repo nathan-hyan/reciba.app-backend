@@ -36,6 +36,7 @@ app.use(express.json());
 
 app.use("/api/user", require("./routes/auth"));
 app.use(`/api/invoice`, require("./routes/invoice"));
+app.use(`/api/mail`, require("./routes/mailHandler"));
 
 // Setting server up
 if (process.env.NODE_ENV === "production") {

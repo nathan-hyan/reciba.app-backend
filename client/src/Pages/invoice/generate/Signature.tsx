@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { Container, Button, Row, Col } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import io from "socket.io-client";
@@ -14,12 +14,19 @@ const socket = io.connect(ENDPOINT, {
 export default function Signature() {
   const signatureRef: any = useRef();
   const { id } = useParams<any>();
+  const [PDFFile, setPDFFile] = useState("");
 
   useEffect(() => {
     socket.emit("join", id);
     socket.emit("close", false);
     //eslint-disable-next-line
   }, []);
+
+  useEffect(() => {
+    socket.on("pdf", (file: string) => {
+      setPDFFile(file);
+    });
+  });
 
   const sendSign = () => {
     socket.emit("sign", signatureRef.current.toDataURL());
@@ -44,7 +51,7 @@ export default function Signature() {
           <SignaturePad ref={signatureRef} />
         </Col>
       </Row>
-      <Row className="mb-5">
+      <Row>
         <Col>
           <Button
             className="w-100"
@@ -57,15 +64,19 @@ export default function Signature() {
             Reiniciar Firma
           </Button>
         </Col>
-
+      </Row>
+      <Row className="my-5 text-center">
         <Col>
-          <Button
-            className="w-100"
-            variant="primary"
-            onClick={() => console.log("ey")}
-          >
-            Aceptar
-          </Button>
+          <p className="lead">¡No cierre esta página!</p>
+          <p>
+            Cuando se genere el comprobante, debajo aparecerá un botón para
+            descargarlo
+          </p>
+          <a download="Comprobante.pdf" href={PDFFile}>
+            <Button className={PDFFile ? "d-block w-100" : "d-none"}>
+              Descargar comprobante
+            </Button>
+          </a>
         </Col>
       </Row>
     </Container>

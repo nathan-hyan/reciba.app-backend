@@ -1,7 +1,5 @@
 const router = require("express").Router();
-const User = require("../models/User");
 const Invoice = require("../models/Invoice");
-const { getPriority } = require("os");
 
 router.post("/", async (req, res) => {
   const createdInvoice = new Invoice({
@@ -10,7 +8,6 @@ router.post("/", async (req, res) => {
 
   try {
     const response = await createdInvoice.save();
-    console.log(response);
     res.send({ success: true, message: "Invoice created", id: response._id });
   } catch (err) {
     res
@@ -22,10 +19,6 @@ router.post("/", async (req, res) => {
 router.put("/addSignature/:id", async (req, res) => {
   const selectedInvoice = await Invoice.findOne({ _id: req.params.id });
   const { sign } = req.body;
-
-  console.log(req.params.id);
-  console.log(selectedInvoice);
-  console.log(!!sign);
 
   try {
     await Invoice.findOneAndUpdate({ _id: req.params.id }, { sign });
@@ -43,9 +36,16 @@ router.put("/addSignature/:id", async (req, res) => {
 });
 
 router.get(`/single/:id`, async (req, res) => {
-  Invoice.findOne({ _id: req.params.id }).then((response) => {
-    res.send({ message: "Ok", data: response });
-  });
+  Invoice.findOne({ _id: req.params.id })
+    .then((response) => {
+      res.send({ message: "Ok", data: response });
+    })
+    .catch(() => {
+      res.status(400).send({
+        success: false,
+        message: "Ocurrió un error buscando la boleta",
+      });
+    });
 });
 
 module.exports = router;

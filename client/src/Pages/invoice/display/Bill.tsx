@@ -45,8 +45,6 @@ export default function Bill({
           <Col className="text-center">
             <p className="my-0">
               <strong>Fecha: </strong>
-              {/* {moment(data.date).utc().format("L")} */}
-              {/* {new Date(data.date).toLocaleDateString("es-AR")} */}
               {Intl.DateTimeFormat(navigator.language, {
                 weekday: "long",
                 month: "long",

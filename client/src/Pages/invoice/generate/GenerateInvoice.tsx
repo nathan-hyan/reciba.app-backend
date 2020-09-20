@@ -87,7 +87,7 @@ export default function GenerateInvoice() {
     } else {
       Axios.post(`/api/invoice/`, { ...state }).then(({ data }) => {
         if (data.id) {
-          history.push(`/invoice/display/${data.id}`);
+          history.push(`/invoice/display/${data.id}/${currentId}`);
         }
         notify.show(data.message, "success");
       });

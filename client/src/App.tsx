@@ -35,7 +35,10 @@ function App() {
 
               {/* Invoice */}
               <Route path="/invoice/generate" component={GenerateInvoice} />
-              <Route path="/invoice/display/:id" component={DisplayInvoice} />
+              <Route
+                path="/invoice/display/:id/:socketId"
+                component={DisplayInvoice}
+              />
               <Route path="/invoice/code/:id" component={ShowQRCodeModal} />
 
               {/* Signature pad */}
