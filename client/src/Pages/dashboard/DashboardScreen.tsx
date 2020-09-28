@@ -26,9 +26,9 @@ export default function DashboardScreen() {
     <Container className="my-5">
       <Row className="h-100-minus d-flex  align-items-center">
         <Col>
-          <Filter />
+          {/* <Filter /> */}
           <InvoicesList completed={completedBills} pending={pendingBills} />
-          <PaginationBar />
+          {/* <PaginationBar /> */}
         </Col>
       </Row>
     </Container>
