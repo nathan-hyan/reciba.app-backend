@@ -33,3 +33,11 @@ canvas {
 .pdf-font {
   font-family: "OpenSans" !important;
 }
+
+fieldset {
+  display: inline;
+}
+
+.pointer {
+  cursor: pointer;
+}

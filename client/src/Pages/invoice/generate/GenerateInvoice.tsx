@@ -9,7 +9,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { notify } from "react-notify-toast";
 import invoice from "../../../Interfaces/invoice";
 import Axios from "axios";
-import { useHistory } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 
 // Socket.io stuff
 import io from "socket.io-client";
@@ -24,6 +24,8 @@ const socket = io.connect(ENDPOINT, { transports: ["websocket"] });
 export default function GenerateInvoice() {
   var date = new Date().toISOString().substr(0, 10);
 
+  const { id } = useParams<any>();
+
   // Get uniqueId for this session
   const { currentId, generateId } = useContext(IdGeneration);
 
@@ -36,6 +38,7 @@ export default function GenerateInvoice() {
     amount: 0,
     concept: "",
     currency: "ARS",
+    pending: false,
   });
   const [validated, setValidated] = useState(false);
   const [showQRCodeModal, setShowQRCodeModal] = useState(false);
@@ -60,9 +63,11 @@ export default function GenerateInvoice() {
    * Keeps track of inputs and saves them to state
    * @param e Input
    */
-  const handleChange = (e: { target: { name: any; value: any } }) => {
-    let { name, value } = e.target;
-    setState({ ...state, [name]: value });
+  const handleChange = (e: any) => {
+    let { name, value, type, checked } = e.target;
+    let newValue = type === "checkbox" ? checked : value;
+
+    setState({ ...state, [name]: newValue });
   };
 
   /**
@@ -77,7 +82,7 @@ export default function GenerateInvoice() {
     e.preventDefault();
     e.stopPropagation();
     let { currentTarget } = e;
-    if (!state.sign) {
+    if (!state.sign && !state.pending) {
       notify.show("Se necesita la firma para continuar", "error");
       return null;
     }
@@ -85,19 +90,39 @@ export default function GenerateInvoice() {
     if (currentTarget.checkValidity() === false) {
       notify.show("Please verify the form and try again", "error");
     } else {
-      Axios.post(`/api/invoice/`, { ...state })
-        .then(({ data }) => {
-          if (data.id) {
-            history.push(`/invoice/display/${data.id}/${currentId}`);
-          }
-          notify.show(data.message, "success");
-        })
-        .catch((err) => {
-          notify.show(
-            "Ocurrió un error creando el comprobante, por favor reintente",
-            "error"
-          );
-        });
+      if (id) {
+        Axios.put(`/api/invoice/edit/${id}`, { ...state })
+          .then(({ data }) => {
+            if (data.success) {
+              history.push(`/invoice/display/${data.data._id}/${currentId}`);
+            }
+            notify.show(data.message, "success");
+          })
+          .catch((err) => {
+            notify.show(
+              "Ocurrió un error creando el comprobante, por favor reintente",
+              "error"
+            );
+          });
+      } else {
+        Axios.post(`/api/invoice/`, { ...state })
+          .then(({ data }) => {
+            if (data.id) {
+              history.push(
+                state.pending
+                  ? `/dashboard`
+                  : `/invoice/display/${data.id}/${currentId}`
+              );
+            }
+            notify.show(data.message, "success");
+          })
+          .catch((err) => {
+            notify.show(
+              "Ocurrió un error creando el comprobante, por favor reintente",
+              "error"
+            );
+          });
+      }
     }
 
     setValidated(true);
@@ -108,7 +133,7 @@ export default function GenerateInvoice() {
    */
   useEffect(() => {
     socket.on("sign", (data: any) => {
-      setState({ ...state, sign: data });
+      setState({ ...state, sign: data, pending: false });
     });
 
     if (showQRCodeModal) {
@@ -123,6 +148,14 @@ export default function GenerateInvoice() {
     // Generate currentId and assign it to IO.Socket
     if (currentId !== "") {
       socket.emit("join", currentId);
+    }
+
+    // If there's an id, get the invoice
+    if (id) {
+      Axios.get(`/api/invoice/single/${id}`).then(({ data }) => {
+        const newDate = data.data.date.substr(0, 10);
+        setState({ ...data.data, date: newDate });
+      });
     }
   }, [currentId]);
 
@@ -234,6 +267,19 @@ export default function GenerateInvoice() {
             </Row>
             <Row>
               <Col className="text-right">
+                <fieldset className="mr-3 py-1 px-2 border border-gray rounded">
+                  <label className="m-0 p-0">
+                    <input
+                      type="checkbox"
+                      name="pending"
+                      checked={state.pending}
+                      onChange={handleChange}
+                      className="mr-1 p-0 m-0"
+                    />
+                    Marcar boleta para firmar luego
+                  </label>
+                </fieldset>
+
                 <Button
                   variant="info"
                   onClick={showQRCodeModalAndGenerateCode}

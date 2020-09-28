@@ -11,17 +11,23 @@ export default function ButtonsGroup({
   exportPDFToFile,
   transformPDFToBase64,
   toggleEmailInput,
+  hasSocketId,
 }: {
   exportPDFToFile: () => void;
   transformPDFToBase64: () => void;
   toggleEmailInput: () => void;
+  hasSocketId?: boolean;
 }) {
   return (
     <Col className="p-3 bg-light text-center shadow rounded">
       <Button className="mx-2" onClick={exportPDFToFile}>
         <FontAwesomeIcon icon={faFileDownload} /> Descargar PDF
       </Button>
-      <Button className="mx-2" onClick={transformPDFToBase64}>
+      <Button
+        disabled={hasSocketId}
+        className="mx-2"
+        onClick={transformPDFToBase64}
+      >
         <FontAwesomeIcon icon={faPhone} /> Enviar PDF al Teléfono
       </Button>
       <Button onClick={toggleEmailInput} className="mx-2">

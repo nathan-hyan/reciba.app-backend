@@ -1,4 +1,5 @@
 export default interface invoice {
+  _id?: string;
   invoiceNumber: number;
   logo?: string;
   date: Date | string;
@@ -8,4 +9,5 @@ export default interface invoice {
   concept: string;
   sign?: string;
   currency: string;
+  pending: boolean;
 }

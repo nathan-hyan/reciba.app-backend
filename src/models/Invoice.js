@@ -54,6 +54,12 @@ const Invoice = new mongoose.Schema(
       default: "ARS",
       required: true,
     },
+
+    pending: {
+      type: Boolean,
+      default: false,
+      required: true,
+    },
   },
   { timestamps: true }
 );

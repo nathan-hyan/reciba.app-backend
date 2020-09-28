@@ -1,6 +1,43 @@
 const router = require("express").Router();
 const Invoice = require("../models/Invoice");
 const GlobalCounter = require("../models/GlobalCounter");
+const { getInvoices } = require("../routes/helper/queryBuilder");
+
+// router.get("/", (req, res) => {
+//   // let { userId, currency } = req.query;
+
+//   // if (!userId) {
+//   //   throw Error("Acceso Denegado.");
+//   // }
+
+//   Invoice.find()
+//     .then((response) => {
+//       res.send({ success: true, data: response });
+//     })
+//     .catch((err) => {
+//       res.send({ success: false, message: err.message });
+//     });
+// });
+
+router.get("/completed", (req, res) => {
+  Invoice.find({ pending: false })
+    .then((response) => {
+      res.send({ success: true, data: response });
+    })
+    .catch((err) =>
+      res.status(500).send({ success: false, message: err.message })
+    );
+});
+
+router.get(`/pending`, (req, res) => {
+  Invoice.find({ pending: true })
+    .then((response) => {
+      res.send({ success: true, data: response });
+    })
+    .catch((err) =>
+      res.status(500).send({ success: false, message: err.message })
+    );
+});
 
 router.post("/createGlobalCounter", (req, res) => {
   new GlobalCounter({ counter: 0 }).save().then((i) => {
@@ -34,8 +71,23 @@ router.post("/", async (req, res) => {
   }
 });
 
+router.put("/edit/:id", (req, res) => {
+  Invoice.findOneAndUpdate({ _id: req.params.id }, req.body)
+    .then((response) => {
+      res.send({ success: true, message: "Boleta guardada", data: response });
+    })
+    .catch((err) => {
+      res.status(400).send({
+        success: false,
+        message:
+          "Ocurrió un error en el servidor, reinicie la página o vuelva a escanear el codigo",
+      });
+
+      console.log(err.message);
+    });
+});
+
 router.put("/addSignature/:id", async (req, res) => {
-  const selectedInvoice = await Invoice.findOne({ _id: req.params.id });
   const { sign } = req.body;
 
   try {

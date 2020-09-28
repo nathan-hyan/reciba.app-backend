@@ -31,6 +31,7 @@ export default function DisplayInvoice() {
     concept: "",
     sign: "",
     currency: "ARS",
+    pending: false,
   });
   const [showEmail, setShowEmail] = useState<boolean>(false);
   const [recipient, setRecipient] = useState<string>("");
@@ -138,6 +139,7 @@ export default function DisplayInvoice() {
           exportPDFToFile={exportPDFToFile}
           transformPDFToBase64={emitPDFViaSocket}
           toggleEmailInput={() => setShowEmail(!showEmail)}
+          hasSocketId={socketId === "no"}
         />
       </Row>
       <Row className={showEmail ? "d-block" : "d-none"}>

@@ -12,12 +12,13 @@ import Login from "./Pages/auth/Login";
 import Logout from "./Pages/auth/Logout";
 
 // Import layout
-import Navigation from "./Layout/Navigation";
+import Navigation from "./Layout/NavigationBar/Navigation";
 import GenerateInvoice from "./Pages/invoice/generate/GenerateInvoice";
 import DisplayInvoice from "./Pages/invoice/display/DisplayInvoice";
 import Signature from "./Pages/invoice/generate/Signature";
 import ShowQRCodeModal from "./Pages/invoice/qr/ShowQRCodeModal";
 import IdGenerationProvider from "./Context/IdGeneration";
+import DashboardScreen from "./Pages/dashboard/DashboardScreen";
 
 function App() {
   return (
@@ -35,11 +36,15 @@ function App() {
 
               {/* Invoice */}
               <Route path="/invoice/generate" component={GenerateInvoice} />
+              <Route path="/invoice/edit/:id" component={GenerateInvoice} />
               <Route
                 path="/invoice/display/:id/:socketId"
                 component={DisplayInvoice}
               />
               <Route path="/invoice/code/:id" component={ShowQRCodeModal} />
+
+              {/* Dashboard */}
+              <Route path="/dashboard" component={DashboardScreen} />
 
               {/* Signature pad */}
               <Route path="/signature/:id" component={Signature} />
