@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import { Nav } from "react-bootstrap";
 
-export default function OptionsLogIn() {
+export default function OptionsLoggedIn() {
   return (
     <Nav className="mr-auto">
       <Nav.Link href="/">

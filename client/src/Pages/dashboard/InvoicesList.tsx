@@ -1,4 +1,4 @@
-import { faPen, faPrint } from "@fortawesome/free-solid-svg-icons";
+import { faPen, faPrint, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import { Col, ListGroup, Row } from "react-bootstrap";
@@ -8,9 +8,11 @@ import invoice from "../../Interfaces/invoice";
 export default function InvoicesList({
   completed,
   pending,
+  deleteBill,
 }: {
   completed: invoice[];
   pending: invoice[];
+  deleteBill: (id: string | undefined) => void;
 }) {
   const history = useHistory();
 
@@ -31,11 +33,16 @@ export default function InvoicesList({
                 }).format(new Date(invoice.date))}{" "}
               </Col>
               <Col>{invoice.from}</Col>
-              <Col md="1" className="text-primary">
+              <Col md="2" className="text-right text-primary">
                 <FontAwesomeIcon
                   onClick={() => history.push(`/invoice/edit/${invoice._id}/`)}
-                  className="pointer"
+                  className="pointer mr-3"
                   icon={faPen}
+                />
+                <FontAwesomeIcon
+                  onClick={() => deleteBill(invoice._id)}
+                  className="pointer"
+                  icon={faTrash}
                 />
               </Col>
             </Row>
@@ -58,7 +65,7 @@ export default function InvoicesList({
                 }).format(new Date(invoice.date))}{" "}
               </Col>
               <Col>{invoice.from}</Col>
-              <Col md="1" className="text-primary">
+              <Col md="2" className="text-right text-primary">
                 <FontAwesomeIcon
                   onClick={() => history.push(`/invoice/edit/${invoice._id}/`)}
                   className="pointer"
@@ -69,7 +76,12 @@ export default function InvoicesList({
                     history.push(`/invoice/display/${invoice._id}/no`)
                   }
                   icon={faPrint}
-                  className="ml-3 pointer"
+                  className="mx-3 pointer"
+                />
+                <FontAwesomeIcon
+                  onClick={() => deleteBill(invoice._id)}
+                  className="pointer"
+                  icon={faTrash}
                 />
               </Col>
             </Row>{" "}

@@ -19,6 +19,7 @@ import Signature from "./Pages/invoice/generate/Signature";
 import ShowQRCodeModal from "./Pages/invoice/qr/ShowQRCodeModal";
 import IdGenerationProvider from "./Context/IdGeneration";
 import DashboardScreen from "./Pages/dashboard/DashboardScreen";
+import PrivateRoute from "./Context/PrivateRoute";
 
 function App() {
   return (
@@ -36,7 +37,10 @@ function App() {
 
               {/* Invoice */}
               <Route path="/invoice/generate" component={GenerateInvoice} />
-              <Route path="/invoice/edit/:id" component={GenerateInvoice} />
+              <PrivateRoute
+                path="/invoice/edit/:id"
+                render={() => <GenerateInvoice />}
+              />
               <Route
                 path="/invoice/display/:id/:socketId"
                 component={DisplayInvoice}
@@ -44,7 +48,10 @@ function App() {
               <Route path="/invoice/code/:id" component={ShowQRCodeModal} />
 
               {/* Dashboard */}
-              <Route path="/dashboard" component={DashboardScreen} />
+              <PrivateRoute
+                path="/dashboard"
+                render={() => <DashboardScreen />}
+              />
 
               {/* Signature pad */}
               <Route path="/signature/:id" component={Signature} />

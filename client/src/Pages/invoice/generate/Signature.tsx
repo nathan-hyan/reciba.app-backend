@@ -7,6 +7,7 @@ import React, { useRef, useState, useEffect } from "react";
 import { Container, Button, Row, Col } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import io from "socket.io-client";
+import DownloadModal from "./DownloadModal";
 const SignaturePad = require("react-signature-pad");
 const ENDPOINT =
   process.env.NODE_ENV !== "production"
@@ -19,6 +20,7 @@ const socket = io.connect(ENDPOINT, {
 export default function Signature() {
   const signatureRef: any = useRef();
   const { id } = useParams<any>();
+  const [showModal, setShowModal] = useState(false);
   const [PDFFile, setPDFFile] = useState("");
 
   useEffect(() => {
@@ -30,6 +32,7 @@ export default function Signature() {
   useEffect(() => {
     socket.on("pdf", (file: string) => {
       setPDFFile(file);
+      showDeleteModal();
     });
   });
 
@@ -37,8 +40,17 @@ export default function Signature() {
     socket.emit("sign", signatureRef.current.toDataURL());
   };
 
+  const showDeleteModal = () => {
+    setShowModal(!showModal);
+  };
+
   return (
     <Container className="h-100-minus mt-5">
+      <DownloadModal
+        PDFFile={PDFFile}
+        show={showModal}
+        handleClose={showDeleteModal}
+      />
       <Row>
         <Col className="text-center">
           <p className="lead m-0">Firme en el campo en blanco para continuar</p>
@@ -77,12 +89,6 @@ export default function Signature() {
             Cuando se genere el comprobante, debajo aparecerá un botón para
             descargarlo
           </p>
-          <a download="Comprobante.pdf" href={PDFFile}>
-            <Button className={PDFFile ? "d-block w-100" : "d-none"}>
-              <FontAwesomeIcon icon={faArrowAltCircleDown} /> Descargar
-              comprobante
-            </Button>
-          </a>
         </Col>
       </Row>
     </Container>

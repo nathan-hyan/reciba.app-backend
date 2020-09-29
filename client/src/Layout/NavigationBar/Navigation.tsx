@@ -1,11 +1,10 @@
 import React, { useContext } from "react";
 import { Navbar, Nav, NavDropdown } from "react-bootstrap";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHome } from "@fortawesome/free-solid-svg-icons";
 import { UserContext } from "../../Context/UserContext";
-import UserMenuLogOut from "./userMenu/UserMenuLogOut";
-import UserMenuLogIn from "./userMenu/UserMenuLogIn";
-import OptionsLogIn from "./options/OptionsLogIn";
+import UsermenuLoggedIn from "./userMenu/UsermenuLoggedIn";
+import UsermenuLoggedOut from "./userMenu/UsermenuLoggedOut";
+import OptionsLoggedIn from "./options/OptionsLoggedIn";
+import OptionsLoggedOut from "./options/OptionsLoggedOut";
 
 export default function Navigation() {
   const user = useContext(UserContext);
@@ -22,7 +21,7 @@ export default function Navigation() {
         <Navbar.Brand href="/">Proyecto Bills</Navbar.Brand>
         <Navbar.Toggle />
         <Navbar.Collapse>
-          <OptionsLogIn />
+          {!user.isLoggedIn ? <OptionsLoggedOut /> : <OptionsLoggedIn />}
           <Nav className="ml-auto">
             <NavDropdown
               title={`Usuario actual: ${
@@ -30,7 +29,7 @@ export default function Navigation() {
               }`}
               id="collasible-nav-dropdown"
             >
-              {!user.isLoggedIn ? <UserMenuLogIn /> : <UserMenuLogOut />}
+              {!user.isLoggedIn ? <UsermenuLoggedOut /> : <UsermenuLoggedIn />}
             </NavDropdown>
           </Nav>
         </Navbar.Collapse>

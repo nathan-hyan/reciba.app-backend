@@ -1,7 +1,12 @@
-const mongoose = require("mongoose");
+const { Schema, model } = require("mongoose");
 
-const Invoice = new mongoose.Schema(
+const Invoice = new Schema(
   {
+    user: {
+      type: Schema.ObjectId,
+      default: null,
+      required: false,
+    },
     invoiceNumber: {
       type: Number,
       required: true,
@@ -64,4 +69,4 @@ const Invoice = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Invoice", Invoice);
+module.exports = model("Invoice", Invoice);

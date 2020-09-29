@@ -24,6 +24,10 @@ const socket = io.connect(ENDPOINT, { transports: ["websocket"] });
 export default function GenerateInvoice() {
   var date = new Date().toISOString().substr(0, 10);
 
+  const axiosHeaders = localStorage.getItem("bill-token")
+    ? { headers: { auth: localStorage.getItem("bill-token") } }
+    : undefined;
+
   const { id } = useParams<any>();
 
   // Get uniqueId for this session
@@ -105,7 +109,7 @@ export default function GenerateInvoice() {
             );
           });
       } else {
-        Axios.post(`/api/invoice/`, { ...state })
+        Axios.post(`/api/invoice/`, { ...state }, axiosHeaders)
           .then(({ data }) => {
             if (data.id) {
               history.push(

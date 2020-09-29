@@ -8,7 +8,7 @@ import Axios from "axios";
 import { UserContext } from "../../Context/UserContext";
 
 export default function Login() {
-  const user = useContext(UserContext);
+  const User = useContext(UserContext);
   const [login, setLogin] = useState({ email: "", password: "" });
   const [validated, setValidated] = useState(false);
   const history = useHistory();
@@ -43,7 +43,7 @@ export default function Login() {
       Axios.post(`/api/user/login`, login)
         .then(({ data }) => {
           if (data.success) {
-            user.setUserData({
+            User.setUserData({
               isLoggedIn: true,
               token: data.data.token,
               name: data.data.name,

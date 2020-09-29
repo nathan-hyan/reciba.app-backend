@@ -19,6 +19,8 @@ const userSchema = new mongoose.Schema(
     },
     lastInvoiceNumber: {
       type: Number,
+      default: 0,
+      required: true,
     },
   },
   { timestamps: true }
