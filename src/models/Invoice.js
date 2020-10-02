@@ -65,6 +65,12 @@ const Invoice = new Schema(
       default: false,
       required: true,
     },
+
+    tags: {
+      type: Array,
+      default: [],
+      required: false,
+    },
   },
   { timestamps: true }
 );

@@ -79,7 +79,7 @@ router.post("/", hasUser, async (req, res) => {
   }
 });
 
-router.put("/edit/:id", (req, res) => {
+router.put("/edit/:id", private, (req, res) => {
   Invoice.findOneAndUpdate({ _id: req.params.id }, req.body)
     .then((response) => {
       res.send({ success: true, message: "Boleta guardada", data: response });

@@ -70,6 +70,7 @@ export default function DashboardScreen() {
           <Col>
             {/* <Filter /> */}
             <InvoicesList
+              refreshData={getBills}
               deleteBill={(id: string | undefined) => deleteBill(id)}
               completed={completedBills}
               pending={pendingBills}

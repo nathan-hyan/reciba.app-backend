@@ -95,7 +95,11 @@ export default function GenerateInvoice() {
       notify.show("Please verify the form and try again", "error");
     } else {
       if (id) {
-        Axios.put(`/api/invoice/edit/${id}`, { ...state })
+        Axios.put(
+          `/api/invoice/edit/${id}`,
+          { ...state },
+          { headers: { auth: localStorage.getItem("bill-token") } }
+        )
           .then(({ data }) => {
             if (data.success) {
               history.push(`/invoice/display/${data.data._id}/${currentId}`);

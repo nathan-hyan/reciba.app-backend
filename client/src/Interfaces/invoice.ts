@@ -10,4 +10,5 @@ export default interface invoice {
   sign?: string;
   currency: string;
   pending: boolean;
+  tags?: string[];
 }
