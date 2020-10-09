@@ -54,7 +54,11 @@ function App() {
               />
 
               {/* Signature pad */}
-              <Route path="/signature/:id" component={Signature} />
+              <Route path="/signature/:socketId" component={Signature} />
+              <Route
+                path="/offlinesignature/:invoiceId"
+                component={Signature}
+              />
             </Switch>
           </Router>
         </IdGenerationProvider>

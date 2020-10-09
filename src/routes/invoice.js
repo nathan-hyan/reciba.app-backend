@@ -19,7 +19,7 @@ router.get("/completed", private, (req, res) => {
 router.get(`/single/:id`, async (req, res) => {
   Invoice.findOne({ _id: req.params.id })
     .then((response) => {
-      res.send({ message: "Ok", data: response });
+      res.send({ success: true, data: response });
     })
     .catch(() => {
       res.status(400).send({
@@ -99,7 +99,10 @@ router.put("/addSignature/:id", async (req, res) => {
   const { sign } = req.body;
 
   try {
-    await Invoice.findOneAndUpdate({ _id: req.params.id }, { sign });
+    await Invoice.findOneAndUpdate(
+      { _id: req.params.id },
+      { sign, pending: false }
+    );
 
     res.send({ success: true, message: "Firma guardada correctamente" });
   } catch (err) {
@@ -120,5 +123,7 @@ router.delete("/:id", private, (req, res) => {
       res.status(400).send({ success: false, message: err.message });
     });
 });
+
+
 
 module.exports = router;

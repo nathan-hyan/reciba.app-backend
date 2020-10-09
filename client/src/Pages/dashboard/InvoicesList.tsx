@@ -1,12 +1,16 @@
 import {
+  faPaperPlane,
   faPen,
   faPrint,
+  faShare,
   faTag,
   faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Axios from "axios";
 import React, { useState } from "react";
 import { Badge, Col, ListGroup, Row } from "react-bootstrap";
+import { notify } from "react-notify-toast";
 import { useHistory } from "react-router-dom";
 import { invoice } from "../../Interfaces/invoice";
 import TagsModal from "./TagsModal";
@@ -35,6 +39,47 @@ export default function InvoicesList({
       prevTags,
     });
     setShowTagsModal((prevState) => !prevState);
+  };
+
+  const sendSignatureLinkViaMail = (
+    invoiceId: string | undefined,
+    from: string | undefined
+  ) => {
+    if (invoiceId === undefined || from === undefined) {
+      notify.show(
+        "Ocurrió un error enviando el mail. Recargue la página y reintente",
+        "error"
+      );
+    } else {
+      const to = window
+        .prompt("Escriba la dirección donde quiere enviar el mail")
+        ?.trim();
+
+      if (to !== "") {
+        console.log(to);
+        Axios.post("/api/mail/send/signaturePetition/", {
+          invoiceId,
+          from,
+          to,
+        })
+          .then((response) => {
+            if (response.data.success) {
+              notify.show(response.data.message, "success");
+            } else {
+              notify.show(response.data.message, "warning");
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+            notify.show(
+              "Ocurrió un error enviando el mail, reintente",
+              "error"
+            );
+          });
+      } else {
+        notify.show("Debe especificar un mail válido", "error");
+      }
+    }
   };
 
   return (
@@ -84,8 +129,15 @@ export default function InvoicesList({
                     />
                     <FontAwesomeIcon
                       onClick={() => deleteBill(invoice._id)}
-                      className="pointer"
+                      className="pointer mr-3"
                       icon={faTrash}
+                    />
+                    <FontAwesomeIcon
+                      className="pointer"
+                      onClick={() =>
+                        sendSignatureLinkViaMail(invoice._id, invoice.from)
+                      }
+                      icon={faPaperPlane}
                     />
                   </Col>
                 </Row>
