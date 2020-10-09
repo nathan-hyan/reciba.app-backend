@@ -1,7 +1,4 @@
-import {
-  faArrowAltCircleDown,
-  faTimesCircle,
-} from "@fortawesome/free-solid-svg-icons";
+import { faTimesCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useRef, useState, useEffect } from "react";
 import { Container, Button, Row, Col } from "react-bootstrap";

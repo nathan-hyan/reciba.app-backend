@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useState } from "react";
 import { Badge, Col, ListGroup, Row } from "react-bootstrap";
 import { useHistory } from "react-router-dom";
-import invoice from "../../Interfaces/invoice";
+import { invoice } from "../../Interfaces/invoice";
 import TagsModal from "./TagsModal";
 
 export default function InvoicesList({

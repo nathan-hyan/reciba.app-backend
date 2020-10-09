@@ -1,4 +1,4 @@
-export default interface invoice {
+export interface invoice {
   _id?: string;
   invoiceNumber: number;
   logo?: string;

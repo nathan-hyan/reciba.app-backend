@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Container, Row } from "react-bootstrap";
-import invoice from "../../../Interfaces/invoice";
+//eslint-disable-next-line
+import { invoice } from "../../../Interfaces/invoice";
 import Axios from "axios";
 import { useParams } from "react-router-dom";
 import { savePDF } from "@progress/kendo-react-pdf";
@@ -47,7 +48,6 @@ export default function DisplayInvoice() {
 
   /**
    * Adapta la fecha para poder ser parseada sin necesidad de usar Moment
-   *
    * @param input Fecha en formato (YYYY-MM-DD)
    */
   const dateTransformer = (input: string) => {

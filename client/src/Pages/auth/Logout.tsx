@@ -15,6 +15,8 @@ export default function Logout() {
       token: "",
       name: "",
     });
+
+    //eslint-disable-next-line
   }, []);
 
   return (

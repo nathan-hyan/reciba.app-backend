@@ -24,6 +24,8 @@ export default function TagsModal({
     } else {
       return;
     }
+
+    //eslint-disable-next-line
   }, [invoiceId]);
 
   const saveTags = (items: string[]) => {

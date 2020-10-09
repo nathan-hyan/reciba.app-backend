@@ -3,11 +3,9 @@ import React, { useState, useEffect } from "react";
 import { Col, Container, Row } from "react-bootstrap";
 import { notify } from "react-notify-toast";
 import { useHistory } from "react-router-dom";
-import invoice from "../../Interfaces/invoice";
+import { invoice } from "../../Interfaces/invoice";
 import LoadingScreen from "../../Layout/LoadingScreen";
-import Filter from "./Filter";
 import InvoicesList from "./InvoicesList";
-import PaginationBar from "./PaginationBar";
 
 export default function DashboardScreen() {
   const history = useHistory();
@@ -59,6 +57,7 @@ export default function DashboardScreen() {
 
   useEffect(() => {
     getBills();
+    //eslint-disable-next-line
   }, []);
 
   if (isLoading) {

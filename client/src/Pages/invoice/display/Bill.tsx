@@ -1,6 +1,6 @@
 import React from "react";
 import { Row, Col } from "react-bootstrap";
-import invoice from "../../../Interfaces/invoice";
+import { invoice } from "../../../Interfaces/invoice";
 
 export default function Bill({
   isOriginal = false,

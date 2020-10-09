@@ -7,7 +7,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { notify } from "react-notify-toast";
-import invoice from "../../../Interfaces/invoice";
+import { invoice } from "../../../Interfaces/invoice";
 import Axios from "axios";
 import { useHistory, useParams } from "react-router-dom";
 
@@ -165,6 +165,7 @@ export default function GenerateInvoice() {
         setState({ ...data.data, date: newDate });
       });
     }
+    //eslint-disable-next-line
   }, [currentId]);
 
   return (
