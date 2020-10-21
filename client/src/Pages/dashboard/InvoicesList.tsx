@@ -1,15 +1,22 @@
+import { faEnvelope } from "@fortawesome/free-regular-svg-icons";
 import {
   faPaperPlane,
   faPen,
   faPrint,
-  faShare,
   faTag,
   faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Axios from "axios";
 import React, { useState } from "react";
-import { Badge, Col, ListGroup, Row } from "react-bootstrap";
+import {
+  Badge,
+  Col,
+  ListGroup,
+  OverlayTrigger,
+  Row,
+  Tooltip,
+} from "react-bootstrap";
 import { notify } from "react-notify-toast";
 import { useHistory } from "react-router-dom";
 import { invoice } from "../../Interfaces/invoice";
@@ -113,7 +120,23 @@ export default function InvoicesList({
                       <Badge key={index} variant="info" className="ml-1">
                         {item}
                       </Badge>
-                    ))}
+                    ))}{" "}
+                    {invoice.alreadySent?.isAlreadySent ? (
+                      <OverlayTrigger
+                        placement="top"
+                        overlay={
+                          <Tooltip id="mail-already-sent">
+                            Mail ya enviado a:{" "}
+                            {invoice.alreadySent?.emailAddress}
+                          </Tooltip>
+                        }
+                      >
+                        <FontAwesomeIcon
+                          icon={faEnvelope}
+                          style={{ color: "#6DB65B" }}
+                        />
+                      </OverlayTrigger>
+                    ) : null}
                   </Col>
                   <Col md="2" className="text-right text-primary">
                     <FontAwesomeIcon

@@ -11,4 +11,8 @@ export interface invoice {
   currency: string;
   pending: boolean;
   tags?: string[];
+  alreadySent?: {
+    isAlreadySent: Boolean;
+    emailAddress?: String;
+  };
 }

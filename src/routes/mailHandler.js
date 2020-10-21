@@ -1,4 +1,5 @@
 const nodemailer = require("nodemailer");
+const Invoice = require("../models/Invoice");
 const router = require("express").Router();
 
 router.post(`/send/signaturePetition/`, (req, res) => {
@@ -28,7 +29,19 @@ router.post(`/send/signaturePetition/`, (req, res) => {
         html,
       })
       .then((info) => {
-        res.send({ success: true, message: "¡Mail enviado!" });
+        Invoice.findOneAndUpdate(
+          { _id: invoiceId },
+          {
+            alreadySent: {
+              isAlreadySent: true,
+              emailAddress: to,
+            },
+          }
+        )
+          .then((response) => {
+            res.send({ success: true, message: "¡Mail enviado!" });
+          })
+          .catch((err) => res.send({ success: false, message: err.message }));
       })
       .catch((err) => res.send({ success: false, message: err.message }));
   })();

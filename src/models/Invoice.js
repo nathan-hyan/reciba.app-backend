@@ -71,6 +71,10 @@ const Invoice = new Schema(
       default: [],
       required: false,
     },
+    alreadySent: {
+      isAlreadySent: Boolean,
+      emailAddress: String,
+    },
   },
   { timestamps: true }
 );
