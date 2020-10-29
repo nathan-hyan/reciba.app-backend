@@ -6,14 +6,63 @@ const hasUser = require("./middlewares/hasUser");
 const User = require("../models/User");
 const private = require("./middlewares/private");
 
-router.get("/completed", private, (req, res) => {
-  Invoice.find({ user: req.user.id, pending: false })
+const queryBuilder = (inputQuery) => {
+  console.log("[INPUTQUERY] >>", inputQuery);
+  let { from, to } = inputQuery;
+
+  let query = {};
+
+  if (from && !to) {
+    query.createdAt = { $gte: from };
+  }
+  if (to && !from) {
+    query.createdAt = { $lte: to };
+  }
+
+  if (from && to) {
+    query.createdAt = {
+      $gte: from,
+      $lte: to,
+    };
+  }
+  return query;
+};
+
+router.get("/completed/", private, (req, res) => {
+  let initialQuery = {};
+
+  initialQuery.from = req.query.from !== "undefined" ? req.query.from : "";
+  initialQuery.to = req.query.to !== "undefined" ? req.query.to : "";
+
+  console.log(initialQuery);
+
+  const query = queryBuilder(initialQuery);
+
+  Invoice.find({ ...query, user: req.user.id, pending: false })
     .then((response) => {
       res.send({ success: true, data: response });
     })
-    .catch((err) =>
-      res.status(500).send({ success: false, message: err.message })
-    );
+    .catch((err) => {
+      res.status(500).send({ success: false, message: err.message });
+    });
+});
+
+router.get(`/pending`, private, (req, res) => {
+  let initialQuery = {};
+
+  initialQuery.from = req.query.from !== "undefined" ? req.query.from : "";
+  initialQuery.to = req.query.to !== "undefined" ? req.query.to : "";
+
+  const query = queryBuilder(initialQuery);
+
+  Invoice.find({ ...query, user: req.user.id, pending: true })
+    .then((response) => {
+      res.send({ success: true, data: response });
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).send({ success: false, message: err.message });
+    });
 });
 
 router.get(`/single/:id`, async (req, res) => {
@@ -27,16 +76,6 @@ router.get(`/single/:id`, async (req, res) => {
         message: "Ocurrió un error buscando la boleta",
       });
     });
-});
-
-router.get(`/pending`, private, (req, res) => {
-  Invoice.find({ user: req.user.id, pending: true })
-    .then((response) => {
-      res.send({ success: true, data: response });
-    })
-    .catch((err) =>
-      res.status(500).send({ success: false, message: err.message })
-    );
 });
 
 router.post("/createGlobalCounter", (req, res) => {
@@ -123,7 +162,5 @@ router.delete("/:id", private, (req, res) => {
       res.status(400).send({ success: false, message: err.message });
     });
 });
-
-
 
 module.exports = router;

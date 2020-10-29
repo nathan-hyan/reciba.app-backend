@@ -19,7 +19,7 @@ import {
 } from "react-bootstrap";
 import { notify } from "react-notify-toast";
 import { useHistory } from "react-router-dom";
-import { invoice } from "../../Interfaces/invoice";
+import { invoice, queryType } from "../../Interfaces/invoice";
 import TagsModal from "./TagsModal";
 
 export default function InvoicesList({
@@ -31,7 +31,7 @@ export default function InvoicesList({
   completed: invoice[];
   pending: invoice[];
   deleteBill: (id: string | undefined) => void;
-  refreshData: () => void;
+  refreshData: (query: queryType) => void;
 }) {
   const history = useHistory();
   const [showTagsModal, setShowTagsModal] = useState(false);
@@ -63,7 +63,6 @@ export default function InvoicesList({
         ?.trim();
 
       if (to !== "") {
-        console.log(to);
         Axios.post("/api/mail/send/signaturePetition/", {
           invoiceId,
           from,
@@ -96,7 +95,7 @@ export default function InvoicesList({
         handleClose={() => toggleTagsModal()}
         invoiceId={tagData.id}
         prevTags={tagData.prevTags}
-        refreshData={refreshData}
+        refreshData={() => refreshData({})}
       />
       <Col className="bg-white rounded shadow p-3 mb-3">
         <small className="text-muted">
@@ -109,10 +108,10 @@ export default function InvoicesList({
                 <Row>
                   <Col md="1">
                     {Intl.DateTimeFormat(navigator.language, {
-                      month: "numeric",
                       day: "numeric",
+                      month: "numeric",
                       year: "numeric",
-                    }).format(new Date(invoice.date))}{" "}
+                    }).format(new Date(invoice.date).setUTCHours(3))}{" "}
                   </Col>
                   <Col>
                     {invoice.from}{" "}
@@ -181,7 +180,7 @@ export default function InvoicesList({
                     month: "numeric",
                     day: "numeric",
                     year: "numeric",
-                  }).format(new Date(invoice.date))}{" "}
+                  }).format(new Date(invoice.date).setUTCHours(3))}{" "}
                 </Col>
                 <Col>
                   {invoice.from}{" "}

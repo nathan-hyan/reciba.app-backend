@@ -16,3 +16,8 @@ export interface invoice {
     emailAddress?: String;
   };
 }
+
+export interface queryType {
+  from?: string;
+  to?: string;
+}

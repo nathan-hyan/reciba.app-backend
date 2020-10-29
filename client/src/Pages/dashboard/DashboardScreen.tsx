@@ -3,8 +3,9 @@ import React, { useState, useEffect } from "react";
 import { Col, Container, Row } from "react-bootstrap";
 import { notify } from "react-notify-toast";
 import { useHistory } from "react-router-dom";
-import { invoice } from "../../Interfaces/invoice";
+import { invoice, queryType } from "../../Interfaces/invoice";
 import LoadingScreen from "../../Layout/LoadingScreen";
+import Filter from "./Filter";
 import InvoicesList from "./InvoicesList";
 
 export default function DashboardScreen() {
@@ -16,10 +17,15 @@ export default function DashboardScreen() {
     headers: { auth: localStorage.getItem("bill-token") },
   };
 
-  const getBills = () => {
-    setIsLoading(true);
-    const completedBills = Axios.get(`/api/invoice/completed`, axiosHeaders);
-    const pendingBills = Axios.get(`/api/invoice/pending`, axiosHeaders);
+  const getBills = (query: queryType) => {
+    const completedBills = Axios.get(
+      `/api/invoice/completed?from=${query.from}&to=${query.to}`,
+      axiosHeaders
+    );
+    const pendingBills = Axios.get(
+      `/api/invoice/pending?from=${query.from}&to=${query.to}`,
+      axiosHeaders
+    );
 
     Axios.all([completedBills, pendingBills])
       .then(
@@ -44,7 +50,7 @@ export default function DashboardScreen() {
         .then((res) => {
           if (res.data.success) {
             notify.show("Boleta eliminada", "success");
-            getBills();
+            getBills({});
           } else {
             notify.show(res.data.message, "warning");
           }
@@ -56,7 +62,8 @@ export default function DashboardScreen() {
   };
 
   useEffect(() => {
-    getBills();
+    setIsLoading(true);
+    getBills({});
     //eslint-disable-next-line
   }, []);
 
@@ -67,9 +74,9 @@ export default function DashboardScreen() {
       <Container className="my-5">
         <Row className="h-100-minus">
           <Col>
-            {/* <Filter /> */}
+            <Filter submitFilter={(query: queryType) => getBills(query)} />
             <InvoicesList
-              refreshData={getBills}
+              refreshData={(query: queryType) => getBills(query)}
               deleteBill={(id: string | undefined) => deleteBill(id)}
               completed={completedBills}
               pending={pendingBills}
