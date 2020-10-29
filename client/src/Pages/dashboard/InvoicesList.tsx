@@ -71,6 +71,7 @@ export default function InvoicesList({
           .then((response) => {
             if (response.data.success) {
               notify.show(response.data.message, "success");
+              refreshData({});
             } else {
               notify.show(response.data.message, "warning");
             }
