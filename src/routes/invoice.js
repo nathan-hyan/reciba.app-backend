@@ -12,6 +12,10 @@ const queryBuilder = (inputQuery) => {
 
   let query = {};
 
+  if (!from && !to) {
+    query.createdAt = { $gte: startOfMonthDate(new Date()) };
+  }
+
   if (from && !to) {
     query.createdAt = { $gte: from };
   }
@@ -28,13 +32,15 @@ const queryBuilder = (inputQuery) => {
   return query;
 };
 
+const startOfMonthDate = (date) => {
+  return new Date(date.getFullYear(), date.getMonth(), 1);
+};
+
 router.get("/completed/", private, (req, res) => {
   let initialQuery = {};
 
   initialQuery.from = req.query.from !== "undefined" ? req.query.from : "";
   initialQuery.to = req.query.to !== "undefined" ? req.query.to : "";
-
-  console.log(initialQuery);
 
   const query = queryBuilder(initialQuery);
 
