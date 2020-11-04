@@ -33,13 +33,12 @@ mongoose.connect(
 let corsOptions = {
   origin: [
     "http://localhost:8000",
-    "http://localhost:3000",
-    "https://nathan-hyan.github.io/reciba-app-frontend/",
+    "http://nathan-hyan.github.io/reciba-app-frontend/",
   ],
   credentials: true,
 };
 
-app.use(cors(corsOptions));
+app.use(cors());
 app.use(express.json());
 
 // Route middlewares
