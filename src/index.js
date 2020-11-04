@@ -1,6 +1,7 @@
 // Entry point test
 
 const express = require("express");
+const cors = require("cors");
 const http = require("http");
 const app = express();
 const mongoose = require("mongoose");
@@ -29,7 +30,12 @@ mongoose.connect(
 );
 
 // Body parser
+var corsOptions = {
+  origin: ["http://localhost:8000"],
+  credentials: true,
+};
 
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Route middlewares
