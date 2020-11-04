@@ -31,7 +31,7 @@ mongoose.connect(
 
 // Body parser
 var corsOptions = {
-  origin: ["http://localhost:8000"],
+  origin: ["http://localhost:8000", "http://localhost:3000"],
   credentials: true,
 };
 
