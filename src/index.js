@@ -30,11 +30,11 @@ mongoose.connect(
 );
 
 // Body parser
-var corsOptions = {
+let corsOptions = {
   origin: [
     "http://localhost:8000",
     "http://localhost:3000",
-    "https://nathan-hyan.github.io/",
+    "https://nathan-hyan.github.io/reciba-app-frontend/",
   ],
   credentials: true,
 };
