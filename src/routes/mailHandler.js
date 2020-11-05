@@ -5,7 +5,7 @@ const router = require("express").Router();
 router.post(`/send/signaturePetition/`, (req, res) => {
   let { invoiceId, from, to } = req.body;
 
-  const html = `<h1>¡Hola!</h1><br><br/><p>${from} te ha enviado esta boleta para ser firmada, hacé click en <a href='https://nathan-hyan.github.io/reciba-app-frontend/offlinesignature/${invoiceId}'>este link</a> para ir</p><p>En caso de que no hayas estado esperando este mail, Es mejor ignorarlo.`;
+  const html = `<h1>¡Hola!</h1><br><br/><p>${from} te ha enviado esta boleta para ser firmada, hacé click en <a href='https://reciba.app/#/offlinesignature/${invoiceId}'>este link</a> para ir</p><p>En caso de que no hayas estado esperando este mail, Es mejor ignorarlo.`;
 
   (async () => {
     let transporter = nodemailer.createTransport({
