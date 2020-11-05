@@ -9,21 +9,24 @@ router.post(`/send/signaturePetition/`, (req, res) => {
 
   (async () => {
     let transporter = nodemailer.createTransport({
-      host: "mail.rollingcodeschool.com",
-      port: 25,
-      secure: false,
+      host: process.env.MAILHOST,
+      secure: true,
+      secureConnection: false, // TLS requires secureConnection to be false
+      tls: {
+        ciphers: "SSLv3",
+      },
+      requireTLS: true,
+      port: 465,
+      debug: true,
       auth: {
         user: process.env.SENDERMAIL,
         pass: process.env.SENDERPASS,
-      },
-      tls: {
-        rejectUnauthorized: false,
       },
     });
 
     await transporter
       .sendMail({
-        from: "RollingCode School <academy@rollingcodeschool.com>",
+        from: `Reciba.app <${process.env.SENDERMAIL}>`,
         to,
         subject: `Comprobante a firmar`,
         html,
@@ -58,21 +61,24 @@ router.post("/send/invoice", (req, res) => {
 
   (async () => {
     let transporter = nodemailer.createTransport({
-      host: "mail.rollingcodeschool.com",
-      port: 25,
-      secure: false,
+      host: process.env.MAILHOST,
+      secure: true,
+      secureConnection: false, // TLS requires secureConnection to be false
+      tls: {
+        ciphers: "SSLv3",
+      },
+      requireTLS: true,
+      port: 465,
+      debug: true,
       auth: {
         user: process.env.SENDERMAIL,
         pass: process.env.SENDERPASS,
-      },
-      tls: {
-        rejectUnauthorized: false,
       },
     });
 
     await transporter
       .sendMail({
-        from: "RollingCode School <academy@rollingcodeschool.com>",
+        from: `Reciba.app <${process.env.SENDERMAIL}>`,
         to: email,
         subject: `Comprobante - ${date}`,
         html,
