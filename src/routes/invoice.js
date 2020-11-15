@@ -8,7 +8,7 @@ const private = require("./middlewares/private");
 
 const queryBuilder = (inputQuery) => {
   console.log("[INPUTQUERY] >>", inputQuery);
-  let { from, to } = inputQuery;
+  let { from, to, tags } = inputQuery;
 
   let query = {};
 
@@ -29,6 +29,10 @@ const queryBuilder = (inputQuery) => {
       $lte: to,
     };
   }
+
+  if (tags) {
+    query.tags = { $regex: tags, $options: "i" };
+  }
   return query;
 };
 
@@ -41,6 +45,7 @@ router.get("/completed/", private, (req, res) => {
 
   initialQuery.from = req.query.from !== "undefined" ? req.query.from : "";
   initialQuery.to = req.query.to !== "undefined" ? req.query.to : "";
+  initialQuery.tags = req.query.tags !== "undefined" ? req.query.tags : "";
 
   const query = queryBuilder(initialQuery);
 
@@ -58,8 +63,10 @@ router.get(`/pending`, private, (req, res) => {
 
   initialQuery.from = req.query.from !== "undefined" ? req.query.from : "";
   initialQuery.to = req.query.to !== "undefined" ? req.query.to : "";
+  initialQuery.tags = req.query.tags !== "undefined" ? req.query.tags : "";
 
   const query = queryBuilder(initialQuery);
+  console.log("OUTPUT QUERY>>", query);
 
   Invoice.find({ ...query, user: req.user.id, pending: true })
     .then((response) => {
