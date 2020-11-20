@@ -11,9 +11,6 @@ const morgan = require("morgan");
 
 require("dotenv").config();
 
-//Log requests to console
-morgan("tiny");
-
 //Initialize HTTP Server
 const server = http.createServer(app);
 
@@ -35,6 +32,9 @@ mongoose.connect(
 
 app.use(cors());
 app.use(express.json());
+
+//Log requests to console
+app.use(morgan("dev"));
 
 // Route middlewares
 

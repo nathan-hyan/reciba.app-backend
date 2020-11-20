@@ -139,7 +139,6 @@ router.put("/edit/:id", private, (req, res) => {
         message:
           "Ocurrió un error en el servidor, reinicie la página o vuelva a escanear el codigo",
       });
-
     });
 });
 
@@ -154,6 +153,8 @@ router.put("/addSignature/:id", async (req, res) => {
 
     res.send({ success: true, message: "Firma guardada correctamente" });
   } catch (err) {
+    console.log(err);
+
     res.status(400).send({
       success: false,
       message:
