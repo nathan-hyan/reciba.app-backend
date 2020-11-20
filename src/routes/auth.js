@@ -109,8 +109,6 @@ router.post("/loggedInUser", hasUser, async (req, res) => {
         });
       }
     } catch (err) {
-      console.log(err);
-
       return res.status(401).send({
         success: false,
         message: "Invalid user, please log in",

@@ -11,7 +11,6 @@ const private = async (req, res, next) => {
     req.user = { ...verified, lastInvoiceNumber };
     next();
   } catch (err) {
-    console.log("No se detectó un usuario");
     next();
   }
 };

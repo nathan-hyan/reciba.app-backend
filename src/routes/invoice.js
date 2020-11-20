@@ -7,7 +7,6 @@ const User = require("../models/User");
 const private = require("./middlewares/private");
 
 const queryBuilder = (inputQuery) => {
-  console.log("[INPUTQUERY] >>", inputQuery);
   let { from, to, tags } = inputQuery;
 
   let query = {};
@@ -66,14 +65,12 @@ router.get(`/pending`, private, (req, res) => {
   initialQuery.tags = req.query.tags !== "undefined" ? req.query.tags : "";
 
   const query = queryBuilder(initialQuery);
-  console.log("OUTPUT QUERY>>", query);
 
   Invoice.find({ ...query, user: req.user.id, pending: true })
     .then((response) => {
       res.send({ success: true, data: response });
     })
     .catch((err) => {
-      console.log(err);
       res.status(500).send({ success: false, message: err.message });
     });
 });
@@ -143,7 +140,6 @@ router.put("/edit/:id", private, (req, res) => {
           "Ocurrió un error en el servidor, reinicie la página o vuelva a escanear el codigo",
       });
 
-      console.log(err.message);
     });
 });
 
