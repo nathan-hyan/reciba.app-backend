@@ -7,8 +7,12 @@ const app = express();
 const mongoose = require("mongoose");
 const path = require("path");
 const iosConnect = require("./iosConnect");
+const morgan = require("morgan");
 
 require("dotenv").config();
+
+//Log requests to console
+morgan("tiny");
 
 //Initialize HTTP Server
 const server = http.createServer(app);
@@ -28,15 +32,6 @@ mongoose.connect(
     console.log(`Connected to database`);
   }
 );
-
-// Body parser
-let corsOptions = {
-  origin: [
-    "http://localhost:8000",
-    "http://nathan-hyan.github.io/reciba-app-frontend/",
-  ],
-  credentials: true,
-};
 
 app.use(cors());
 app.use(express.json());
