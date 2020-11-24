@@ -1,11 +1,13 @@
 import mongoose from "mongoose";
 
-const connection = process.env.MONGO_URI || "no";
-
-if (connection !== "no") {
+if (process.env.MONGO_URI) {
   mongoose.connect(
-    connection,
-    { useNewUrlParser: true, useUnifiedTopology: true },
+    process.env.MONGO_URI,
+    {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      useFindAndModify: false,
+    },
     () => {
       console.log(`Connected to Database`);
     }
