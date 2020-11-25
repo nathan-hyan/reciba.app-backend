@@ -69,6 +69,7 @@ export default class invoice {
     ).build();
 
     Invoice.find({ ...newQuery, user: req.user.id, pending: false })
+      .sort({createdAt: "desc"})
       .then((response) => {
         res.send({ success: true, data: response });
       })
@@ -85,6 +86,7 @@ export default class invoice {
     ).build();
 
     Invoice.find({ ...newQuery, user: req.user.id, pending: true })
+      .sort({createdAt: "desc"})
       .then((response) => {
         res.send({ success: true, data: response });
       })

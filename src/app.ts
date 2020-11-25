@@ -13,7 +13,8 @@ import "./middleware/database";
 import authRoute from "./routes/auth";
 import invoices from "./routes/invoice";
 import email from "./routes/email";
-import { Server, Socket } from "socket.io";
+import { Server } from "socket.io";
+import socket from "./middleware/socketIo";
 
 // Express
 const app: Application = express();
@@ -31,33 +32,10 @@ let io = new Server(http, {
   },
 });
 
-io.on("connection", (socket: Socket) => {
-  console.log(`>> SOCKET || ${socket.id} just connected`);
-
-  socket.on("join", (room: string) => {
-    console.log(`>> SOCKET || Connected to ${room}`);
-    socket.join(room);
-
-    socket.on("disconnect", () => {
-      console.log(`>> SOCKET || ${socket.id} disconnected`);
-    });
-
-    socket.on("close", () => {
-      io.to(room).emit("close", false);
-      console.log(`>> SOCKET || ${socket.id} disconnected`);
-    });
-
-    socket.on("pdf", (file: string) => {
-      console.log(`>> SOCKET || ${socket.id} send a file`);
-      io.to(room).emit("pdf", file);
-    });
-
-    socket.on("sign", (signature: string) => {
-      console.log(`>> SOCKET || ${socket.id} signed a bill`);
-      io.to(room).emit("sign", signature);
-    });
-  });
-});
+/**
+ * Running Socket io middleware
+ */
+socket(io);
 
 // Routes
 
@@ -86,5 +64,3 @@ app.use(
 // Setting up the server
 const PORT: number = parseInt(process.env.PORT || "8000");
 http.listen(PORT, () => console.log(`Server running in ${PORT}`));
-
-//WebSocket initialization
