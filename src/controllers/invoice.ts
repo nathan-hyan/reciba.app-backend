@@ -1,8 +1,8 @@
-import { Request, Response, NextFunction } from "express";
-import createError from "../middleware/createError";
-import Invoice from "../models/invoice";
-import User from "../models/user";
-import GlobalCounter, { _Counter } from "../models/globalCounter";
+import { Request, Response, NextFunction } from 'express';
+import createError from '../middleware/createError';
+import Invoice from '../models/invoice';
+import User from '../models/user';
+import GlobalCounter, { _Counter } from '../models/globalCounter';
 
 interface InputQuery {
   from: string;
@@ -15,7 +15,7 @@ interface OutputQuery {
     $gte?: Date | string;
     $lte?: Date | string;
   };
-  tags?: { $regex: string; $options: "i" };
+  tags?: { $regex: string; $options: 'i' };
 }
 
 class query {
@@ -31,9 +31,9 @@ class query {
 
   public build() {
     let query: OutputQuery = {};
-    const from = this.from !== "undefined" ? this.from : "";
-    const to = this.to !== "undefined" ? this.to : "";
-    const tags = this.tags !== "undefined" ? this.tags : "";
+    const from = this.from !== 'undefined' ? this.from : '';
+    const to = this.to !== 'undefined' ? this.to : '';
+    const tags = this.tags !== 'undefined' ? this.tags : '';
 
     if (!from && !to) {
       query.createdAt = { $gte: this.startOfMonthDate(new Date()) };
@@ -49,12 +49,12 @@ class query {
     if (from && to) {
       query.createdAt = {
         $gte: from,
-        $lte: to,
+        $lte: to
       };
     }
 
     if (tags) {
-      query.tags = { $regex: tags, $options: "i" };
+      query.tags = { $regex: tags, $options: 'i' };
     }
     return query;
   }
@@ -69,7 +69,7 @@ export default class invoice {
     ).build();
 
     Invoice.find({ ...newQuery, user: req.user.id, pending: false })
-      .sort({createdAt: "desc"})
+      .sort({ createdAt: 'desc' })
       .then((response) => {
         res.send({ success: true, data: response });
       })
@@ -86,7 +86,7 @@ export default class invoice {
     ).build();
 
     Invoice.find({ ...newQuery, user: req.user.id, pending: true })
-      .sort({createdAt: "desc"})
+      .sort({ createdAt: 'desc' })
       .then((response) => {
         res.send({ success: true, data: response });
       })
@@ -113,13 +113,13 @@ export default class invoice {
 
   public async createInvoice(req: any, res: Response, next: NextFunction) {
     let { counter } = (await GlobalCounter.findOne({
-      _id: "5f67b4f0dab3807105ed751b",
+      _id: '5f67b4f0dab3807105ed751b'
     })) as _Counter;
 
     const createdInvoice = new Invoice({
       ...req.body,
       user: req.user ? req.user.id : null,
-      invoiceNumber: req.user ? req.user.lastInvoiceNumber : counter,
+      invoiceNumber: req.user ? req.user.lastInvoiceNumber : counter
     });
 
     try {
@@ -132,15 +132,15 @@ export default class invoice {
         );
       } else {
         await GlobalCounter.findOneAndUpdate(
-          { _id: "5f67b4f0dab3807105ed751b" },
+          { _id: '5f67b4f0dab3807105ed751b' },
           { counter: ++counter }
         );
       }
 
       res.send({
         success: true,
-        message: "Invoice created",
-        id: response._id,
+        message: 'Invoice created',
+        id: response._id
       });
     } catch (err) {
       createError(next, err.message);
@@ -152,8 +152,8 @@ export default class invoice {
       .then((response) => {
         res.send({
           success: true,
-          message: "Boleta guardada",
-          data: response,
+          message: 'Boleta guardada',
+          data: response
         });
       })
       .catch((err) => {
@@ -168,25 +168,36 @@ export default class invoice {
   ) {
     const { sign } = req.body;
 
-    try {
-      await Invoice.findOneAndUpdate(
-        { _id: req.params.id },
-        { sign, pending: false }
-      );
+    const alreadySigned = await Invoice.findOne({
+      _id: req.params.id,
+      pending: false
+    });
 
-      res.send({
-        success: true,
-        message: "Firma guardada correctamente",
-      });
-    } catch (err) {
-      createError(next, err.message);
+    console.log(alreadySigned);
+
+    if (!alreadySigned) {
+      try {
+        await Invoice.findOneAndUpdate(
+          { _id: req.params.id },
+          { sign, pending: false }
+        );
+
+        res.send({
+          success: true,
+          message: 'Firma guardada correctamente'
+        });
+      } catch (err) {
+        createError(next, err.message);
+      }
+    } else {
+      createError(next, 'This invoice is already signed.');
     }
   }
 
   public deleteInvoice(req: any, res: Response, next: NextFunction) {
     Invoice.findOneAndDelete({ _id: req.params.id })
       .then((response) =>
-        res.send({ success: true, message: "Boleta eliminada" })
+        res.send({ success: true, message: 'Boleta eliminada' })
       )
       .catch((err) => {
         createError(next, err.message);
