@@ -79,13 +79,13 @@ export default class invoice {
   }
 
   public getPendinginvoices(req: any, res: Response, next: NextFunction) {
-    const newQuery = new query(
-      req.query.from,
-      req.query.to,
-      req.query.tags
-    ).build();
+    // const newQuery = new query(
+    //   req.query.from,
+    //   req.query.to,
+    //   req.query.tags
+    // ).build();
 
-    Invoice.find({ ...newQuery, user: req.user.id, pending: true })
+    Invoice.find({ user: req.user.id, pending: true })
       .sort({ createdAt: 'desc' })
       .then((response) => {
         res.send({ success: true, data: response });
