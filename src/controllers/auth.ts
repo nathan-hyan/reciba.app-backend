@@ -3,6 +3,7 @@ import User from "../models/user";
 import JWT from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { NextFunction, Request, Response } from "express";
+import { verify } from "hcaptcha";
 export default class user {
   /**
    * Checks if the salted password entered by the user
@@ -29,60 +30,43 @@ export default class user {
    * @returns true | false
    */
 
-  private async checkIfEmailAlreadyExist(email: string) {
-    const exist = await User.findOne({ email });
-
-    return !!exist;
-  }
-
-  /**
-   * Gets a plain text password and hashes it with
-   * salt
-   *
-   * @param password string - Password to hash
-   */
-
-  private async hashPassword(password: string) {
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    return hashedPassword;
-  }
-
-  /**
-   * Creates a token to validate calls from
-   * the front-end
-   *
-   * @param userId Id from the loggedIn user
-   */
-  private async createToken(email: string) {
-    const secretToken = process.env.TOKEN || "no";
-    const dbUser: any = await User.findOne({ email });
-
-    if (secretToken === "no" || !dbUser) {
-      throw Error("Token or user invalid");
-    } else {
-      return JWT.sign({ _id: dbUser._id }, secretToken);
-    }
-  }
-
   public async createUser(req: any, res: Response, next: NextFunction) {
     if (!req.body.token) {
       createError(next, "No captcha assigned");
-    } else if (await this.checkIfEmailAlreadyExist(req.body.email)) {
+    }
+
+    const exist = await User.findOne({ email: req.body.email });
+
+    if (exist) {
       createError(next, "Email already exists");
     } else {
-      const user = new User({
-        name: req.body.name,
-        email: req.body.email,
-        password: await this.hashPassword(req.body.password),
-      });
-
       try {
-        await user.save();
-        res.send({ success: true, message: "User created" });
-      } catch (error) {
-        createError(next, error.message);
+        let { success } = await verify(
+          process.env.CAPTCHASECRET!!,
+          req.body.token
+        );
+
+        if (success) {
+          const salt = await bcrypt.genSalt(10);
+          const hashedPassword = await bcrypt.hash(req.body.password, salt);
+
+          const user = new User({
+            name: req.body.name,
+            email: req.body.email,
+            password: hashedPassword,
+          });
+
+          try {
+            await user.save();
+            res.send({ success: true, message: "User created" });
+          } catch (error) {
+            createError(next, error.message);
+          }
+        } else {
+          createError(next, `Token error`);
+        }
+      } catch (e) {
+        createError(next, `Token error ${e.message}`);
       }
     }
   }
