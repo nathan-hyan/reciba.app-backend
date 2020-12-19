@@ -1,10 +1,8 @@
-import createError from '../middleware/createError';
-import User from '../models/user';
-import JWT from 'jsonwebtoken';
-import bcrypt from 'bcryptjs';
-import { NextFunction, Request, Response } from 'express';
-import { create } from 'domain';
-
+import createError from "../middleware/createError";
+import User from "../models/user";
+import JWT from "jsonwebtoken";
+import bcrypt from "bcryptjs";
+import { NextFunction, Request, Response } from "express";
 export default class user {
   /**
    * Checks if the salted password entered by the user
@@ -17,7 +15,7 @@ export default class user {
   private async isValidPassword(email: string, password: string) {
     const dbUser: any = await User.findOne({ email });
     if (!dbUser) {
-      throw Error('No user found');
+      throw Error("No user found");
     } else {
       return await bcrypt.compare(password, dbUser.password);
     }
@@ -58,29 +56,31 @@ export default class user {
    * @param userId Id from the loggedIn user
    */
   private async createToken(email: string) {
-    const secretToken = process.env.TOKEN || 'no';
+    const secretToken = process.env.TOKEN || "no";
     const dbUser: any = await User.findOne({ email });
 
-    if (secretToken === 'no' || !dbUser) {
-      throw Error('Token or user invalid');
+    if (secretToken === "no" || !dbUser) {
+      throw Error("Token or user invalid");
     } else {
       return JWT.sign({ _id: dbUser._id }, secretToken);
     }
   }
 
   public async createUser(req: any, res: Response, next: NextFunction) {
-    if (await this.checkIfEmailAlreadyExist(req.body.email)) {
-      createError(next, 'Email already exists');
+    if (!req.body.token) {
+      createError(next, "No captcha assigned");
+    } else if (await this.checkIfEmailAlreadyExist(req.body.email)) {
+      createError(next, "Email already exists");
     } else {
       const user = new User({
         name: req.body.name,
         email: req.body.email,
-        password: await this.hashPassword(req.body.password)
+        password: await this.hashPassword(req.body.password),
       });
 
       try {
         await user.save();
-        res.send({ success: true, message: 'User created' });
+        res.send({ success: true, message: "User created" });
       } catch (error) {
         createError(next, error.message);
       }
@@ -109,9 +109,9 @@ export default class user {
       } else {
         // Create and send token
         const token = JWT.sign({ id: user._id }, process.env.TOKEN as string, {
-          expiresIn: process.env.TOKEN_TIME
+          expiresIn: process.env.TOKEN_TIME,
         });
-        res.header('auth', token);
+        res.header("auth", token);
         await User.findOneAndUpdate(
           { _id: user._id },
           { lastLogin: new Date().toString() }
@@ -119,7 +119,7 @@ export default class user {
         res.send({
           success: true,
           message: `Welcome back ${user.name}`,
-          data: { name: user.name, token }
+          data: { name: user.name, token },
         });
       }
     }
@@ -136,7 +136,7 @@ export default class user {
       try {
         userExist = await User.findOne({ _id: req.user.id });
       } catch (err) {
-        createError(next, 'Session expired, please, log in again');
+        createError(next, "Session expired, please, log in again");
         return;
       }
 
@@ -151,14 +151,14 @@ export default class user {
           if (currentDate > verifiedToken.exp) {
             return res.status(401).send({
               success: false,
-              message: 'Invalid user, please log in'
+              message: "Invalid user, please log in",
             });
           } else {
             const token = JWT.sign(
               { id: userExist._id },
               process.env.TOKEN as string,
               {
-                expiresIn: process.env.TOKEN_TIME
+                expiresIn: process.env.TOKEN_TIME,
               }
             );
             await User.findOneAndUpdate(
@@ -168,19 +168,19 @@ export default class user {
             res.send({
               success: true,
               message: `Welcome back ${userExist.name}`,
-              data: { name: userExist.name, token }
+              data: { name: userExist.name, token },
             });
           }
         } catch (err) {
           return res.status(401).send({
             success: false,
-            message: 'Invalid user, please log in'
+            message: "Invalid user, please log in",
           });
         }
       } else {
         return res.status(401).send({
           success: false,
-          message: 'Invalid user, please log in'
+          message: "Invalid user, please log in",
         });
       }
     }
