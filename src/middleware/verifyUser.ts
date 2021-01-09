@@ -1,8 +1,9 @@
-import { Request, Response, NextFunction } from "express";
+import { Response, NextFunction } from "express";
 import JWT from "jsonwebtoken";
+import { CustomRequest, UserType } from "../constants/types";
 import createError from "./createError";
 
-const verify = (req: any, res: Response, next: NextFunction) => {
+const verify = (req: CustomRequest, res: Response, next: NextFunction): void => {
   const token = req.header("auth");
 
   if (!token) {
@@ -10,7 +11,7 @@ const verify = (req: any, res: Response, next: NextFunction) => {
   } else {
     try {
       const verified = JWT.verify(token, process.env.TOKEN as string);
-      req.user = verified;
+      req.user = verified as UserType;
       next();
     } catch (err) {
       createError(next, "Access denied", 401);

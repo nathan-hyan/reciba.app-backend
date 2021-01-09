@@ -1,12 +1,13 @@
 import JWT, { Secret } from "jsonwebtoken";
 import { Response, NextFunction } from "express";
 import User, { UserSchema } from "../models/user";
+import { CustomRequest, UserType } from "../constants/types";
 
-const hasUser = async (req: any, res: Response, next: NextFunction) => {
+const hasUser = async (req: CustomRequest, res: Response, next: NextFunction):Promise<void> => {
   const token: string = req.header("auth") || "";
 
   try {
-    const verified = JWT.verify(token, process.env.TOKEN as Secret) as any;
+    const verified = JWT.verify(token, process.env.TOKEN as Secret) as UserType;
     const { lastInvoiceNumber } = (await User.findOne({
       _id: verified.id,
     })) as UserSchema;

@@ -1,9 +1,15 @@
 import createError from "../middleware/createError";
-import User from "../models/user";
+import User, { UserSchema } from "../models/user";
 import JWT from "jsonwebtoken";
 import bcrypt from "bcryptjs";
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, response, Response } from "express";
 import { verify } from "hcaptcha";
+import { CustomRequest } from "../constants/types";
+
+interface JWTToken {
+  exp: string;
+}
+
 export default class user {
   /**
    * Checks if the salted password entered by the user
@@ -14,7 +20,7 @@ export default class user {
    */
 
   private async isValidPassword(email: string, password: string) {
-    const dbUser: any = await User.findOne({ email });
+    const dbUser = await User.findOne({ email });
     if (!dbUser) {
       throw Error("No user found");
     } else {
@@ -30,7 +36,7 @@ export default class user {
    * @returns true | false
    */
 
-  public async createUser(req: any, res: Response, next: NextFunction) {
+  public async createUser(req: CustomRequest, res: Response, next: NextFunction): Promise<void> {
     if (!req.body.token) {
       createError(next, "No captcha assigned");
     }
@@ -41,8 +47,8 @@ export default class user {
       createError(next, "Email already exists");
     } else {
       try {
-        let { success } = await verify(
-          process.env.CAPTCHASECRET!!,
+        const { success } = await verify(
+          process.env.CAPTCHASECRET as string,
           req.body.token
         );
 
@@ -71,7 +77,7 @@ export default class user {
     }
   }
 
-  public async login(req: any, res: Response, next: NextFunction) {
+  public async login(req: CustomRequest, res: Response): Promise<Response> {
     // Check if user exist
     const user = await User.findOne({ email: req.body.email });
 
@@ -107,32 +113,36 @@ export default class user {
         });
       }
     }
+
+    return res
+      .status(401)
+      .send({ success: false, message: `Email or password incorrect` });
   }
 
   public async checkForLoggedInUser(
-    req: any,
+    req: CustomRequest,
     res: Response,
     next: NextFunction
-  ) {
+  ): Promise<Response> {
     {
-      let userExist;
+      let userExist: UserSchema | null;
 
       try {
         userExist = await User.findOne({ _id: req.user.id });
       } catch (err) {
+        userExist = null;
         createError(next, "Session expired, please, log in again");
-        return;
       }
 
       if (userExist) {
         try {
-          const verifiedToken: any = JWT.verify(
+          const verifiedToken = JWT.verify(
             req.body.storedToken,
             process.env.TOKEN as string
-          );
+          ) as JWTToken;
           const currentDate = Date.now().toString().substring(0, 10);
 
-          if (currentDate > verifiedToken.exp) {
+          if (currentDate > verifiedToken.exp){
             return res.status(401).send({
               success: false,
               message: "Invalid user, please log in",
@@ -165,8 +175,9 @@ export default class user {
         return res.status(401).send({
           success: false,
           message: "Invalid user, please log in",
-        });
-      }
+        })}
+
+        return response;
     }
   }
 }

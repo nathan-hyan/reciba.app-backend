@@ -1,6 +1,6 @@
-import { Socket } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 
-const socket = (io: any) => {
+const socket = (io: Server): void => {
   io.on('connection', (socket: Socket) => {
     console.log(`>> SOCKET || ${socket.id} just connected`);
 

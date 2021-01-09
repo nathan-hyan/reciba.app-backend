@@ -23,8 +23,8 @@ app.use(json());
 app.use(cors());
 app.use(morgan("tiny"));
 
-let http = createServer(app);
-let io = new Server(http, {
+const http = createServer(app);
+const io = new Server(http, {
   cors: {
     credentials: true,
     methods: ["GET", "PATCH", "POST", "PUT"],
@@ -44,14 +44,15 @@ app.use(`/api/invoice`, invoices);
 app.use(`/api/mail`, email);
 app.use(
   (
-    error: { status: any; message: any; stack: any },
-    req: any,
+    error: { status; message; stack },
+    req,
     res: {
-      status: (arg0: any) => void;
-      json: (arg0: { success: boolean; message: any; stack: any }) => void;
+      status: (arg0) => void;
+      json: (arg0: { success: boolean; message; stack }) => void;
     },
     next: NextFunction
   ) => {
+    next();
     res.status(error.status || 500);
     res.json({
       success: false,

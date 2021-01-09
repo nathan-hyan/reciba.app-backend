@@ -1,14 +1,9 @@
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
 import createError from '../middleware/createError';
 import Invoice from '../models/invoice';
 import User from '../models/user';
 import GlobalCounter, { _Counter } from '../models/globalCounter';
-
-interface InputQuery {
-  from: string;
-  to: string;
-  tags: string;
-}
+import { CustomRequest } from '../constants/types';
 
 interface OutputQuery {
   createdAt?: {
@@ -30,7 +25,7 @@ class query {
   };
 
   public build() {
-    let query: OutputQuery = {};
+    const query: OutputQuery = {};
     const from = this.from !== 'undefined' ? this.from : '';
     const to = this.to !== 'undefined' ? this.to : '';
     const tags = this.tags !== 'undefined' ? this.tags : '';
@@ -61,7 +56,7 @@ class query {
 }
 
 export default class invoice {
-  public getCompletedinvoices(req: any, res: Response, next: NextFunction) {
+  public getCompletedinvoices(req: CustomRequest, res: Response, next: NextFunction): void {
     const newQuery = new query(
       req.query.from,
       req.query.to,
@@ -78,7 +73,7 @@ export default class invoice {
       });
   }
 
-  public getPendinginvoices(req: any, res: Response, next: NextFunction) {
+  public getPendinginvoices(req: CustomRequest, res: Response, next: NextFunction): void {
     // const newQuery = new query(
     //   req.query.from,
     //   req.query.to,
@@ -95,7 +90,7 @@ export default class invoice {
       });
   }
 
-  public getSingleInvoice(req: any, res: Response, next: NextFunction) {
+  public getSingleInvoice(req: CustomRequest, res: Response, next: NextFunction): void {
     Invoice.findOne({ _id: req.params.id })
       .then((response) => {
         res.send({ success: true, data: response });
@@ -105,13 +100,13 @@ export default class invoice {
       });
   }
 
-  public createGlobalCounter(req: any, res: Response, next: NextFunction) {
+  public createGlobalCounter(req: CustomRequest, res: Response): void {
     new GlobalCounter({ counter: 0 }).save().then((response) => {
       res.send({ success: true, data: response });
     });
   }
 
-  public async createInvoice(req: any, res: Response, next: NextFunction) {
+  public async createInvoice(req: CustomRequest, res: Response, next: NextFunction): Promise<void> {
     let { counter } = (await GlobalCounter.findOne({
       _id: '5f67b4f0dab3807105ed751b'
     })) as _Counter;
@@ -147,7 +142,7 @@ export default class invoice {
     }
   }
 
-  public editInvoice(req: any, res: Response, next: NextFunction) {
+  public editInvoice(req: CustomRequest, res: Response, next: NextFunction): void {
     Invoice.findOneAndUpdate({ _id: req.params.id }, req.body)
       .then((response) => {
         res.send({
@@ -162,10 +157,10 @@ export default class invoice {
   }
 
   public async addSignatureToInvoice(
-    req: any,
+    req: CustomRequest,
     res: Response,
     next: NextFunction
-  ) {
+  ): Promise<void> {
     const { sign } = req.body;
 
     const alreadySigned = await Invoice.findOne({
@@ -194,9 +189,9 @@ export default class invoice {
     }
   }
 
-  public deleteInvoice(req: any, res: Response, next: NextFunction) {
+  public deleteInvoice(req: CustomRequest, res: Response, next: NextFunction): void {
     Invoice.findOneAndDelete({ _id: req.params.id })
-      .then((response) =>
+      .then(() =>
         res.send({ success: true, message: 'Boleta eliminada' })
       )
       .catch((err) => {

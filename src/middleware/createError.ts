@@ -7,7 +7,7 @@ import { NextFunction } from "express";
  * @param message A custom message for your error
  * @param status (Optional) Status code for the error (default: 500)
  */
-const createError = (next: NextFunction, message: string, status = 500) => {
+const createError = (next: NextFunction, message: string, status = 500):void => {
   try {
     throw new Error(message);
   } catch (e) {
