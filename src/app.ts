@@ -44,11 +44,11 @@ app.use(`/api/invoice`, invoices);
 app.use(`/api/mail`, email);
 app.use(
   (
-    error: { status; message; stack },
-    req,
+    error: { status: number; message: string; stack: unknown },
+    req: unknown,
     res: {
-      status: (arg0) => void;
-      json: (arg0: { success: boolean; message; stack }) => void;
+      status: (arg0: number) => void;
+      json: (arg0: { success: boolean; message: string; stack: unknown }) => void;
     },
     next: NextFunction
   ) => {
