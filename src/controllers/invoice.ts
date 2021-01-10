@@ -19,7 +19,7 @@ class query {
     private from: string | Date,
     private to: string | Date,
     private tags: string,
-    private type: 'check' | 'transfer' | 'cash' | 'creditcard' | 'undefined'
+    private types: 'check' | 'transfer' | 'cash' | 'creditcard' | 'undefined'
   ) {}
 
   private startOfMonthDate = (date: Date) => {
@@ -31,7 +31,7 @@ class query {
     const from = this.from !== 'undefined' ? this.from : '';
     const to = this.to !== 'undefined' ? this.to : '';
     const tags = this.tags !== 'undefined' ? this.tags : '';
-    const type = this.type !== 'undefined' ? this.type : '';
+    const types = this.types !== 'undefined' ? this.types : '';
 
     if (!from && !to) {
       query.createdAt = { $gte: this.startOfMonthDate(new Date()) };
@@ -55,8 +55,8 @@ class query {
       query.tags = { $regex: tags, $options: 'i' };
     }
 
-    if (type) {
-      query.payment = type
+    if (types) {
+      query.payment = types
     }
 
     console.log(query)
@@ -70,7 +70,7 @@ export default class invoice {
       req.query.from,
       req.query.to,
       req.query.tags,
-      req.query.type
+      req.query.types
     ).build();
 
     Invoice.find({ ...newQuery, user: req.user.id, pending: false })
