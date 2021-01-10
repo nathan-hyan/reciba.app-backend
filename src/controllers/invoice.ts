@@ -11,13 +11,15 @@ interface OutputQuery {
     $lte?: Date | string;
   };
   tags?: { $regex: string; $options: 'i' };
+  payment?: 'check' | 'transfer' | 'cash' | 'creditcard';
 }
 
 class query {
   constructor(
     private from: string | Date,
     private to: string | Date,
-    private tags: string
+    private tags: string,
+    private types: 'check' | 'transfer' | 'cash' | 'creditcard' | 'undefined'
   ) {}
 
   private startOfMonthDate = (date: Date) => {
@@ -29,6 +31,7 @@ class query {
     const from = this.from !== 'undefined' ? this.from : '';
     const to = this.to !== 'undefined' ? this.to : '';
     const tags = this.tags !== 'undefined' ? this.tags : '';
+    const types = this.types !== 'undefined' ? this.types : '';
 
     if (!from && !to) {
       query.createdAt = { $gte: this.startOfMonthDate(new Date()) };
@@ -51,6 +54,12 @@ class query {
     if (tags) {
       query.tags = { $regex: tags, $options: 'i' };
     }
+
+    if (types) {
+      query.payment = types
+    }
+
+    console.log(query)
     return query;
   }
 }
@@ -60,7 +69,8 @@ export default class invoice {
     const newQuery = new query(
       req.query.from,
       req.query.to,
-      req.query.tags
+      req.query.tags,
+      req.query.types
     ).build();
 
     Invoice.find({ ...newQuery, user: req.user.id, pending: false })
