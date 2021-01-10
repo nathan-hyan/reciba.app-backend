@@ -75,6 +75,11 @@ const Invoice = new Schema(
       isAlreadySent: Boolean,
       emailAddress: String,
     },
+    payment: {
+      type: String,
+      default: 'cash',
+      required: false
+    }
   },
   { timestamps: true }
 );

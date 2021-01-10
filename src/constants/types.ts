@@ -10,6 +10,7 @@ type Query = {
   from: string,
   to: string,
   tags: string
+  type: 'check' | 'transfer' | 'cash' | 'creditcard';
 }
 
 export type UserType = {
