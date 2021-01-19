@@ -79,6 +79,11 @@ const Invoice = new Schema(
       type: String,
       default: 'cash',
       required: false
+    },
+    transactionNumber: {
+      type: String || Number || undefined,
+      default: undefined,
+      required: false
     }
   },
   { timestamps: true }
