@@ -81,7 +81,8 @@ export default class user {
     // Check if user exist
     const user = await User.findOne({ email: req.body.email });
 
-    if (!user) {
+     if (!user) {
+      console.log('User doesnt exist')
       return res
         .status(401)
         .send({ success: false, message: `Email or password incorrect` });
@@ -93,11 +94,14 @@ export default class user {
       );
 
       if (!validPassword) {
+        console.log("Password is invalid")
         return res
           .status(401)
           .send({ success: false, message: `Email or password incorrect` });
       } else {
         // Create and send token
+
+        console.log("User logged in correctly")
         const token = JWT.sign({ id: user._id }, process.env.TOKEN as string, {
           expiresIn: process.env.TOKEN_TIME,
         });
@@ -114,9 +118,8 @@ export default class user {
       }
     }
 
-    return res
-      .status(401)
-      .send({ success: false, message: `Email or password incorrect` });
+    return res;
+
   }
 
   public async checkForLoggedInUser(
