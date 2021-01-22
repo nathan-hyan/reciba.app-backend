@@ -99,10 +99,7 @@ export default class user {
           .status(401)
           .send({ success: false, message: `Email or password incorrect` });
       } else {
-        // Create and send token
-
-        console.log("User logged in correctly")
-        const token = JWT.sign({ id: user._id }, process.env.TOKEN as string, {
+        const token = JWT.sign({ id: user._id}, process.env.TOKEN as string, {
           expiresIn: process.env.TOKEN_TIME,
         });
         res.header("auth", token);

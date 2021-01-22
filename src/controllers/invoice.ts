@@ -1,17 +1,17 @@
-import { Response, NextFunction } from 'express';
-import createError from '../middleware/createError';
-import Invoice from '../models/invoice';
-import User from '../models/user';
-import GlobalCounter, { _Counter } from '../models/globalCounter';
-import { CustomRequest } from '../constants/types';
+import { Response, NextFunction } from "express";
+import createError from "../middleware/createError";
+import Invoice from "../models/invoice";
+import User from "../models/user";
+import GlobalCounter, { _Counter } from "../models/globalCounter";
+import { CustomRequest } from "../constants/types";
 
 interface OutputQuery {
   createdAt?: {
     $gte?: Date | string;
     $lte?: Date | string;
   };
-  tags?: { $regex: string; $options: 'i' };
-  payment?: 'check' | 'transfer' | 'cash' | 'creditcard';
+  tags?: { $regex: string; $options: "i" };
+  payment?: "check" | "transfer" | "cash" | "creditcard";
 }
 
 class query {
@@ -19,7 +19,7 @@ class query {
     private from: string | Date,
     private to: string | Date,
     private tags: string,
-    private types: 'check' | 'transfer' | 'cash' | 'creditcard' | 'undefined'
+    private types: "check" | "transfer" | "cash" | "creditcard" | "undefined"
   ) {}
 
   private startOfMonthDate = (date: Date) => {
@@ -28,10 +28,10 @@ class query {
 
   public build() {
     const query: OutputQuery = {};
-    const from = this.from !== 'undefined' ? this.from : '';
-    const to = this.to !== 'undefined' ? this.to : '';
-    const tags = this.tags !== 'undefined' ? this.tags : '';
-    const types = this.types !== 'undefined' ? this.types : '';
+    const from = this.from !== "undefined" ? this.from : "";
+    const to = this.to !== "undefined" ? this.to : "";
+    const tags = this.tags !== "undefined" ? this.tags : "";
+    const types = this.types !== "undefined" ? this.types : "";
 
     if (!from && !to) {
       query.createdAt = { $gte: this.startOfMonthDate(new Date()) };
@@ -47,25 +47,29 @@ class query {
     if (from && to) {
       query.createdAt = {
         $gte: from,
-        $lte: to
+        $lte: to,
       };
     }
 
     if (tags) {
-      query.tags = { $regex: tags, $options: 'i' };
+      query.tags = { $regex: tags, $options: "i" };
     }
 
     if (types) {
-      query.payment = types
+      query.payment = types;
     }
 
-    console.log(query)
+    console.log(query);
     return query;
   }
 }
 
 export default class invoice {
-  public getCompletedinvoices(req: CustomRequest, res: Response, next: NextFunction): void {
+  public getCompletedinvoices(
+    req: CustomRequest,
+    res: Response,
+    next: NextFunction
+  ): void {
     const newQuery = new query(
       req.query.from,
       req.query.to,
@@ -74,7 +78,7 @@ export default class invoice {
     ).build();
 
     Invoice.find({ ...newQuery, user: req.user.id, pending: false })
-      .sort({ createdAt: 'desc' })
+      .sort({ createdAt: "desc" })
       .then((response) => {
         res.send({ success: true, data: response });
       })
@@ -83,7 +87,11 @@ export default class invoice {
       });
   }
 
-  public getPendinginvoices(req: CustomRequest, res: Response, next: NextFunction): void {
+  public getPendinginvoices(
+    req: CustomRequest,
+    res: Response,
+    next: NextFunction
+  ): void {
     // const newQuery = new query(
     //   req.query.from,
     //   req.query.to,
@@ -91,7 +99,7 @@ export default class invoice {
     // ).build();
 
     Invoice.find({ user: req.user.id, pending: true })
-      .sort({ createdAt: 'desc' })
+      .sort({ createdAt: "desc" })
       .then((response) => {
         res.send({ success: true, data: response });
       })
@@ -100,7 +108,11 @@ export default class invoice {
       });
   }
 
-  public getSingleInvoice(req: CustomRequest, res: Response, next: NextFunction): void {
+  public getSingleInvoice(
+    req: CustomRequest,
+    res: Response,
+    next: NextFunction
+  ): void {
     Invoice.findOne({ _id: req.params.id })
       .then((response) => {
         res.send({ success: true, data: response });
@@ -116,15 +128,22 @@ export default class invoice {
     });
   }
 
-  public async createInvoice(req: CustomRequest, res: Response, next: NextFunction): Promise<void> {
+  public async createInvoice(
+    req: CustomRequest,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
     let { counter } = (await GlobalCounter.findOne({
-      _id: '5f67b4f0dab3807105ed751b'
+      _id: "5f67b4f0dab3807105ed751b",
     })) as _Counter;
+
+    const user = await User.findOne({ _id: req.user.id });
 
     const createdInvoice = new Invoice({
       ...req.body,
       user: req.user ? req.user.id : null,
-      invoiceNumber: req.user ? req.user.lastInvoiceNumber : counter
+      logo: user?.logo ? user.logo : null,
+      invoiceNumber: req.user ? req.user.lastInvoiceNumber : counter,
     });
 
     try {
@@ -137,28 +156,32 @@ export default class invoice {
         );
       } else {
         await GlobalCounter.findOneAndUpdate(
-          { _id: '5f67b4f0dab3807105ed751b' },
+          { _id: "5f67b4f0dab3807105ed751b" },
           { counter: ++counter }
         );
       }
 
       res.send({
         success: true,
-        message: 'Invoice created',
-        id: response._id
+        message: "Invoice created",
+        id: response._id,
       });
     } catch (err) {
       createError(next, err.message);
     }
   }
 
-  public editInvoice(req: CustomRequest, res: Response, next: NextFunction): void {
+  public editInvoice(
+    req: CustomRequest,
+    res: Response,
+    next: NextFunction
+  ): void {
     Invoice.findOneAndUpdate({ _id: req.params.id }, req.body)
       .then((response) => {
         res.send({
           success: true,
-          message: 'Boleta guardada',
-          data: response
+          message: "Boleta guardada",
+          data: response,
         });
       })
       .catch((err) => {
@@ -175,7 +198,7 @@ export default class invoice {
 
     const alreadySigned = await Invoice.findOne({
       _id: req.params.id,
-      pending: false
+      pending: false,
     });
 
     console.log(alreadySigned);
@@ -189,21 +212,23 @@ export default class invoice {
 
         res.send({
           success: true,
-          message: 'Firma guardada correctamente'
+          message: "Firma guardada correctamente",
         });
       } catch (err) {
         createError(next, err.message);
       }
     } else {
-      createError(next, 'This invoice is already signed.');
+      createError(next, "This invoice is already signed.");
     }
   }
 
-  public deleteInvoice(req: CustomRequest, res: Response, next: NextFunction): void {
+  public deleteInvoice(
+    req: CustomRequest,
+    res: Response,
+    next: NextFunction
+  ): void {
     Invoice.findOneAndDelete({ _id: req.params.id })
-      .then(() =>
-        res.send({ success: true, message: 'Boleta eliminada' })
-      )
+      .then(() => res.send({ success: true, message: "Boleta eliminada" }))
       .catch((err) => {
         createError(next, err.message);
       });

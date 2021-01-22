@@ -1,6 +1,7 @@
 import { Schema, model, Document } from "mongoose";
 
 export interface UserSchema extends Document {
+  logo: string;
   name: string;
   email: string;
   password: string;
@@ -24,6 +25,10 @@ const userSchema = new Schema(
     },
     lastLogin: {
       type: Date,
+    },
+    logo: {
+      type: String,
+      required: false
     },
     lastInvoiceNumber: {
       type: Number,

@@ -3,6 +3,7 @@ export interface CustomRequest extends Request {
   user: UserType;
   query: Query;
   params: Params;
+  logo?: string;
   body: ReadableStream<Uint8Array> & (EmailType & Invoice & UserType);
 }
 
@@ -20,6 +21,7 @@ export type UserType = {
   token: string,
   storedToken: string,
   name: string
+  logo?: string,
 }
 
 type Params = {
