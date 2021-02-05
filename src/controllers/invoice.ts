@@ -175,8 +175,8 @@ export default class invoice {
     req: CustomRequest,
     res: Response,
     next: NextFunction
-  ): void {
-    Invoice.findOneAndUpdate({ _id: req.params.id }, req.body)
+  ): Promise<void> {
+    return Invoice.findOneAndUpdate({ _id: req.params.id }, req.body)
       .then((response) => {
         res.send({
           success: true,

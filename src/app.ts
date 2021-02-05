@@ -18,15 +18,15 @@ import socket from "./middleware/socketIo";
 
 // Express
 const app: Application = express();
+app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(json());
-app.use(cors());
 app.use(morgan("tiny"));
 
 const http = createServer(app);
 const io = new Server(http, {
   cors: {
-    credentials: true,
+    credentials: false,
     methods: ["GET", "PATCH", "POST", "PUT"],
     origin: true, // accept from any domain }
   },
