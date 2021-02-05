@@ -31,7 +31,7 @@ invoices.post("/createGlobalCounter", (req, res) =>
 );
 invoices.post("/", hasUser as never, (req, res, next) => createInvoice(req as unknown as CustomRequest, res, next));
 
-invoices.put("/editInvoice/:id", verify as never, (req, res, next) =>
+invoices.put("/edit/:id", verify as never, (req, res, next) =>
   editInvoice(req as unknown as CustomRequest, res, next)
 );
 invoices.put("/addSignature/:id", (req, res, next) =>
