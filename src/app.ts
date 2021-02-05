@@ -1,6 +1,6 @@
 import cors from "cors";
 import morgan from "morgan";
-import * as bodyParser from "body-parser";
+import bodyParser from "body-parser";
 import { createServer } from "http";
 
 // DotEnv File Config
@@ -19,6 +19,7 @@ import socket from "./middleware/socketIo";
 // Express
 const app: Application = express();
 app.use(cors());
+app.use(bodyParser({limit: '50mb'}));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(json());
 app.use(morgan("tiny"));
