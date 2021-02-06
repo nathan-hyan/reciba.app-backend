@@ -22,7 +22,7 @@ invoices.get("/completed/", verify as never, (req, res, next) =>
 invoices.get(`/pending`, verify as never, (req, res, next) =>
   getPendinginvoices(req as unknown as CustomRequest, res, next)
 );
-invoices.get(`/single/:id`, (req, res, next) =>
+invoices.get(`/single/:id`, hasUser as never, (req, res, next) =>
   getSingleInvoice(req as unknown as CustomRequest, res, next)
 );
 

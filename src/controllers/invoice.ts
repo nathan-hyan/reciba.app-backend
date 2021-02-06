@@ -3,7 +3,7 @@ import createError from "../middleware/createError";
 import Invoice from "../models/invoice";
 import User from "../models/user";
 import GlobalCounter, { _Counter } from "../models/globalCounter";
-import { CustomRequest } from "../constants/types";
+import { CustomRequest, UserType } from "../constants/types";
 
 interface OutputQuery {
   createdAt?: {
@@ -108,14 +108,16 @@ export default class invoice {
       });
   }
 
-  public getSingleInvoice(
+  public async getSingleInvoice(
     req: CustomRequest,
     res: Response,
     next: NextFunction
-  ): void {
+  ): Promise<void> {
+  const logo: UserType = await User.findOne({_id: req.user.id});
+
     Invoice.findOne({ _id: req.params.id })
       .then((response) => {
-        res.send({ success: true, data: response });
+        res.send({ success: true, data: {...response._doc, logo: logo.logo} });
       })
       .catch((err: { message: string }) => {
         createError(next, err.message);
@@ -137,12 +139,12 @@ export default class invoice {
       _id: "5f67b4f0dab3807105ed751b",
     })) as _Counter;
 
-    const user = await User.findOne({ _id: req.user.id });
+    // const user = await User.findOne({ _id: req.user.id });
 
     const createdInvoice = new Invoice({
       ...req.body,
       user: req.user ? req.user.id : null,
-      logo: user?.logo ? user.logo : null,
+      // logo: user?.logo ? user.logo : null,
       invoiceNumber: req.user ? req.user.lastInvoiceNumber : counter,
     });
 
