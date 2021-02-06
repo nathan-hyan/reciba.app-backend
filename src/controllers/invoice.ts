@@ -142,7 +142,7 @@ export default class invoice {
     const createdInvoice = new Invoice({
       ...req.body,
       user: req.user ? req.user.id : null,
-      logo: user?.logo ? user.logo : null,
+      // logo: user?.logo ? user.logo : null,
       invoiceNumber: req.user ? req.user.lastInvoiceNumber : counter,
     });
 

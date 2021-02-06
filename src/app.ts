@@ -19,7 +19,6 @@ import socket from "./middleware/socketIo";
 // Express
 const app: Application = express();
 app.use(cors());
-app.use(bodyParser({limit: '100mb'}));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(json());
 app.use(morgan("tiny"));
