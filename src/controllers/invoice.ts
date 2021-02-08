@@ -113,7 +113,7 @@ export default class invoice {
     res: Response,
     next: NextFunction
   ): Promise<void> {
-  const logo: UserType = await User.findOne({_id: req.user.id});
+  const logo: UserType = req.user ? await User.findOne({_id: req.user.id}) : {logo: undefined};
 
     Invoice.findOne({ _id: req.params.id })
       .then((response) => {
