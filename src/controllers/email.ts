@@ -1,5 +1,5 @@
 import { Response, NextFunction } from "express";
-import { invoiceReadyMessage, petitionToSign } from "../constants/mailText";
+import { confirmationEmail, invoiceReadyMessage, petitionToSign } from "../constants/mailText";
 import nodemailer from "nodemailer";
 import SMTPTransport from "nodemailer/lib/smtp-transport";
 import Invoice from "../models/invoice";
@@ -8,11 +8,15 @@ import { CustomRequest } from "../constants/types";
 
 export interface CustomEmailRequest extends CustomRequest {
   file: string;
-email: string;
+  email: string;
 }
 
 export default class emailHandler {
-  public sendPetitionToSign(req: CustomEmailRequest, res: Response, next: NextFunction): void {
+  public sendPetitionToSign(
+    req: CustomEmailRequest,
+    res: Response,
+    next: NextFunction
+  ): void {
     const { invoiceId, from, to } = req.body;
     const host = process.env.MAILHOST as string;
 
@@ -20,7 +24,7 @@ export default class emailHandler {
       const transporter = nodemailer.createTransport({
         host,
         secure: true,
-        secureConnection: false, // TLS requires secureConnection to be false
+        secureConnection: false,
         tls: {
           ciphers: "SSLv3",
         },
@@ -59,7 +63,11 @@ export default class emailHandler {
     })();
   }
 
-  public sendInvoice(req: CustomEmailRequest, res: Response, next: NextFunction): void {
+  public sendInvoice(
+    req: CustomEmailRequest,
+    res: Response,
+    next: NextFunction
+  ): void {
     const { file, date, email } = req.body;
 
     (async () => {
@@ -97,5 +105,38 @@ export default class emailHandler {
         })
         .catch((err) => createError(next, err.message));
     })();
+  }
+
+  public sendConfirmationEmail(token: string, email: string): void {
+    try {
+      (async () => {
+        const transporter = nodemailer.createTransport({
+          host: process.env.MAILHOST,
+          secure: true,
+          secureConnection: false,
+          tls: {
+            ciphers: "SSLv3",
+          },
+          requireTLS: true,
+          port: process.env.EMAILPORT,
+          debug: true,
+          auth: {
+            user: process.env.SENDERMAIL,
+            pass: process.env.SENDERPASS,
+          },
+        } as SMTPTransport.Options);
+
+        await transporter.sendMail({
+          from: `Reciba.app <${process.env.SENDERMAIL}>`,
+          to: email,
+          subject: `Confirme su e-mail`,
+          html: confirmationEmail(token),
+        });
+      })();
+
+      console.log('Mail de confirmación enviado >>', email)
+    } catch (err) {
+      console.log(err);
+    }
   }
 }

@@ -3,4 +3,5 @@ export interface userType {
   password: string;
   email: string;
   logo?: string;
+  confirmed: boolean
 }

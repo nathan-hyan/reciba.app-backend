@@ -1,13 +1,23 @@
 import createError from "../middleware/createError";
 import User, { UserSchema } from "../models/user";
-import JWT from "jsonwebtoken";
+import JWT, { Secret } from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { NextFunction, response, Response } from "express";
 import { verify } from "hcaptcha";
 import { CustomRequest } from "../constants/types";
+import emailHandler from "./email";
 
 interface JWTToken {
   exp: string;
+}
+
+function prepareUserForConfirmation(userId: string, email: string) {
+  const {sendConfirmationEmail} = new emailHandler();
+  const TOKEN = JWT.sign({id: userId}, process.env.TOKEN as Secret, {expiresIn: 900});
+
+  sendConfirmationEmail(TOKEN, email)  
+
+  console.log(TOKEN)
 }
 
 export default class user {
@@ -56,14 +66,16 @@ export default class user {
           const salt = await bcrypt.genSalt(10);
           const hashedPassword = await bcrypt.hash(req.body.password, salt);
 
-          const user = new User({
+          const newUser = new User({
             name: req.body.name,
             email: req.body.email,
             password: hashedPassword,
           });
 
+          prepareUserForConfirmation(newUser._id, newUser.email)
+          
           try {
-            await user.save();
+            await newUser.save();
             res.send({ success: true, message: "User created" });
           } catch (error) {
             createError(next, error.message);
@@ -79,19 +91,25 @@ export default class user {
 
   public async login(req: CustomRequest, res: Response): Promise<Response> {
     // Check if user exist
-    const user = await User.findOne({ email: req.body.email });
+    const doesUserExist = await User.findOne({ email: req.body.email });
 
-     if (!user) {
-      console.log('User doesnt exist')
+     if (!doesUserExist) {
+
+
       return res
         .status(401)
         .send({ success: false, message: `Email or password incorrect` });
+    } else if (!doesUserExist.confirmed){
+      prepareUserForConfirmation(doesUserExist._id, doesUserExist.email)
+      return res.send({success: true, confirmed: false})
     } else {
       // Check for valid password
       const validPassword = await bcrypt.compare(
         req.body.password,
-        user.password
+        doesUserExist.password
       );
+
+
 
       if (!validPassword) {
         console.log("Password is invalid")
@@ -99,18 +117,19 @@ export default class user {
           .status(401)
           .send({ success: false, message: `Email or password incorrect` });
       } else {
-        const token = JWT.sign({ id: user._id}, process.env.TOKEN as string, {
+        const token = JWT.sign({ id: doesUserExist._id}, process.env.TOKEN as string, {
           expiresIn: process.env.TOKEN_TIME,
         });
         res.header("auth", token);
         await User.findOneAndUpdate(
-          { _id: user._id },
+          { _id: doesUserExist._id },
           { lastLogin: new Date().toString() }
         );
         res.send({
           success: true,
-          message: `Welcome back ${user.name}`,
-          data: { name: user.name, token },
+          confirmed: true,
+          message: `Welcome back ${doesUserExist.name}`,
+          data: { name: doesUserExist.name, token },
         });
       }
     }
@@ -178,6 +197,23 @@ export default class user {
         })}
 
         return response;
+    }
+  }
+
+  public async confirmUser(req: CustomRequest, res: Response, next: NextFunction): Promise<void> {
+    const {token} = req.body;
+    let jwtResponse: {id: string}
+
+    try{
+      jwtResponse = JWT.verify(token, process.env.TOKEN as Secret) as {id: string};
+      User.findOneAndUpdate({_id: jwtResponse.id}, {confirmed: true})
+      .then(() => {
+        res.send({success: true, message: 'User successfully confirmed'})
+      })
+      .catch((err: { message: string; }) => createError(next, err.message))
+    }
+    catch(err){
+      createError(next, "Invalid Token, please retry")
     }
   }
 }
