@@ -44,7 +44,7 @@ socket(io);
 app.use("/api/user", authRoute);
 app.use(`/api/invoice`, invoices);
 app.use(`/api/mail`, email);
-app.use(`/transactions`, test)
+app.use(`/transacciones`, test)
 app.use(
   (
     error: { status: number; message: string; stack: unknown },
