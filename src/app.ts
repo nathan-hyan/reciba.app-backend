@@ -16,6 +16,7 @@ import email from "./routes/email";
 import test from "./routes/test"
 import { Server } from "socket.io";
 import socket from "./middleware/socketIo";
+import notificacion from "./routes/notificacion";
 
 // Express
 const app: Application = express();
@@ -44,7 +45,8 @@ socket(io);
 app.use("/api/user", authRoute);
 app.use(`/api/invoice`, invoices);
 app.use(`/api/mail`, email);
-app.use(`/transacciones`, test)
+app.use(`/notificacion`, notificacion);
+app.use(`/transacciones`, test);
 app.use(
   (
     error: { status: number; message: string; stack: unknown },
