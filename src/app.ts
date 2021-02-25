@@ -13,6 +13,7 @@ import "./middleware/database";
 import authRoute from "./routes/auth";
 import invoices from "./routes/invoice";
 import email from "./routes/email";
+import test from "./routes/test"
 import { Server } from "socket.io";
 import socket from "./middleware/socketIo";
 
@@ -43,6 +44,7 @@ socket(io);
 app.use("/api/user", authRoute);
 app.use(`/api/invoice`, invoices);
 app.use(`/api/mail`, email);
+app.use(`/transactions`, test)
 app.use(
   (
     error: { status: number; message: string; stack: unknown },
