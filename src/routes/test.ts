@@ -19,7 +19,8 @@ const FILTER = PACKS.find(pack => {console.log(pack.id);return pack.id === req.p
   res.send({
     page: req.query.page,
     size: req.query.size,
-    transacciones: req.params.id ? {...FILTER, "packs": [
+    transacciones: FILTER, 
+    packs: [
       {
         "id": 22,
         "contrato": "65004",
@@ -30,7 +31,7 @@ const FILTER = PACKS.find(pack => {console.log(pack.id);return pack.id === req.p
         "fechaBaja": null,
         "fechaConsumido": null
       }
-    ]} : PACKS,
+    ],
   });
 });
 
