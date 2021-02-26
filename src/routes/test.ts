@@ -41,6 +41,50 @@ const FILTER = PACKS.find(pack => {console.log(pack.id);return pack.id === req.p
         "fechaBaja": null,
         "fechaConsumido": null
       }
+      },
+      {
+        "id": 24,
+        "contrato": "55104",
+        "orden": "548",
+        "interlocutorComercial": "10023",
+        "precio": 25.36,
+        "fechaCompra": "2021-02-19T20:30:10+0000",
+        "fechaBaja": null,
+        "fechaConsumido": null
+      }
+      },
+      {
+        "id": 23,
+        "contrato": "55104",
+        "orden": "548",
+        "interlocutorComercial": "10023",
+        "precio": 25.36,
+        "fechaCompra": "2021-02-19T20:30:10+0000",
+        "fechaBaja": null,
+        "fechaConsumido": null
+      }
+      },
+      {
+        "id": 23,
+        "contrato": "55104",
+        "orden": "548",
+        "interlocutorComercial": "10023",
+        "precio": 25.36,
+        "fechaCompra": "2021-02-19T20:30:10+0000",
+        "fechaBaja": null,
+        "fechaConsumido": null
+      }
+      },
+      {
+        "id": 23,
+        "contrato": "55104",
+        "orden": "548",
+        "interlocutorComercial": "10023",
+        "precio": 25.36,
+        "fechaCompra": "2021-02-19T20:30:10+0000",
+        "fechaBaja": null,
+        "fechaConsumido": null
+      }
     ],
   });
 });
