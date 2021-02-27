@@ -203,11 +203,9 @@ export default class invoice {
       pending: false,
     });
 
-    console.log(alreadySigned);
-
     if (!alreadySigned) {
       try {
-        await Invoice.findOneAndUpdate(
+        const updatedInvoice = await Invoice.findOneAndUpdate(
           { _id: req.params.id },
           { sign, pending: false }
         );
@@ -215,6 +213,7 @@ export default class invoice {
         res.send({
           success: true,
           message: "Firma guardada correctamente",
+          id: updatedInvoice._id
         });
       } catch (err) {
         createError(next, err.message);
