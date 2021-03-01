@@ -20,7 +20,7 @@ router.get("/:id", (req: Request, res: Response) => {
   res.send({
     page: req.query.page,
     size: req.query.size,
-    transacciones: FILTER,
+    transaccion: FILTER,
     packs: [
       {
         id: 22,
