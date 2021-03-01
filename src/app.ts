@@ -1,3 +1,7 @@
+import test from "./routes/test"
+import notificacion from "./routes/notificacion";
+import packs from "./routes/packs"
+
 import cors from "cors";
 import morgan from "morgan";
 import bodyParser from "body-parser";
@@ -13,10 +17,8 @@ import "./middleware/database";
 import authRoute from "./routes/auth";
 import invoices from "./routes/invoice";
 import email from "./routes/email";
-import test from "./routes/test"
 import { Server } from "socket.io";
 import socket from "./middleware/socketIo";
-import notificacion from "./routes/notificacion";
 
 // Express
 const app: Application = express();
@@ -47,6 +49,7 @@ app.use(`/api/invoice`, invoices);
 app.use(`/api/mail`, email);
 app.use(`/notificacion`, notificacion);
 app.use(`/transacciones`, test);
+app.use(`/packs`, packs);
 app.use(
   (
     error: { status: number; message: string; stack: unknown },
