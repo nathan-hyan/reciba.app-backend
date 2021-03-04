@@ -2,8 +2,7 @@ import express, { Response, Request } from "express";
 
 const router = express.Router();
 const PACKS = [
-  {
-    "packs": [
+
       {
         "id": 1,
         "tipo": "ON_DEMAND",
@@ -114,8 +113,6 @@ const PACKS = [
         "diasVigencia": 30,
         "codigoMarca": null
       }
-    ]
-  }
 ];
 
 router.post("/", (req: Request, res: Response) => {
