@@ -149,12 +149,12 @@ router.get("/:id", (req: Request, res: Response) => {
       {
         id: 1,
         fechaDesde: "2021-02-17T14:58:43+0000",
-        fechaBaja: "2021-02-19T14:58:43+0000",
+        // fechaBaja: "2021-02-19T14:58:43+0000",
       },
       {
         id: 7,
         fechaDesde: "2021-02-17T14:58:43+0000",
-        fechaBaja: "2021-02-19T14:58:43+0000",
+        // fechaBaja: "2021-02-19T14:58:43+0000",
       },
     ],
     precios: [
