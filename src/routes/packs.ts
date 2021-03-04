@@ -7,7 +7,7 @@ const PACKS = [
     tipo: "ON_DEMAND",
     titulo: "Test",
     subtitulo: "Test",
-    descripcion: "Descripción",
+    descripcion: "lorem90lorem90lorem90lorem90lorem90lorem90lorem90lorem90lorem90lorem90lorem90lorem90lorem90lorem90lorem90lorem90lorem90lorem90lorem90lorem90lorem90lorem90lorem90lorem90lorem90lorem90lorem90lorem90lorem90lorem90lorem90lorem90lorem90lorem90lorem90lorem90lorem90lorem90lorem90lorem90lorem90lorem90lorem90lorem90lorem90lorem90lorem90lorem90lorem90lorem90lorem90lorem90lorem90lorem90lorem90lorem90lorem90lorem90",
     imagen:
       "https://developers.decidir.com/static/apidoc/images/logo-decidir.png",
     precio: 1999.99,
