@@ -5,6 +5,7 @@ import createError from "./createError";
 
 const verify = (req: CustomRequest, res: Response, next: NextFunction): void => {
   const token = req.header("auth");
+  console.log({token})
 
   if (!token) {
     createError(next, "Access denied", 401);

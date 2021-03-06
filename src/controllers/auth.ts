@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import createError from "../middleware/createError";
 import User, { UserSchema } from "../models/user";
 import JWT, { Secret } from "jsonwebtoken";
@@ -12,12 +13,14 @@ interface JWTToken {
 }
 
 function prepareUserForConfirmation(userId: string, email: string) {
-  const {sendConfirmationEmail} = new emailHandler();
-  const TOKEN = JWT.sign({id: userId}, process.env.TOKEN as Secret, {expiresIn: 900});
+  const { sendConfirmationEmail } = new emailHandler();
+  const TOKEN = JWT.sign({ id: userId }, process.env.TOKEN as Secret, {
+    expiresIn: 900,
+  });
 
-  sendConfirmationEmail(TOKEN, email)  
+  sendConfirmationEmail(TOKEN, email);
 
-  console.log(TOKEN)
+  console.log(TOKEN);
 }
 
 export default class user {
@@ -46,7 +49,11 @@ export default class user {
    * @returns true | false
    */
 
-  public async createUser(req: CustomRequest, res: Response, next: NextFunction): Promise<void> {
+  public async createUser(
+    req: CustomRequest,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
     if (!req.body.token) {
       createError(next, "No captcha assigned");
     }
@@ -72,8 +79,8 @@ export default class user {
             password: hashedPassword,
           });
 
-          prepareUserForConfirmation(newUser._id, newUser.email)
-          
+          prepareUserForConfirmation(newUser._id, newUser.email);
+
           try {
             await newUser.save();
             res.send({ success: true, message: "User created" });
@@ -93,15 +100,13 @@ export default class user {
     // Check if user exist
     const doesUserExist = await User.findOne({ email: req.body.email });
 
-     if (!doesUserExist) {
-
-
+    if (!doesUserExist) {
       return res
         .status(401)
         .send({ success: false, message: `Email or password incorrect` });
-    } else if (!doesUserExist.confirmed){
-      prepareUserForConfirmation(doesUserExist._id, doesUserExist.email)
-      return res.send({success: true, confirmed: false})
+    } else if (!doesUserExist.confirmed) {
+      prepareUserForConfirmation(doesUserExist._id, doesUserExist.email);
+      return res.send({ success: true, confirmed: false });
     } else {
       // Check for valid password
       const validPassword = await bcrypt.compare(
@@ -109,17 +114,19 @@ export default class user {
         doesUserExist.password
       );
 
-
-
       if (!validPassword) {
-        console.log("Password is invalid")
+        console.log("Password is invalid");
         return res
           .status(401)
           .send({ success: false, message: `Email or password incorrect` });
       } else {
-        const token = JWT.sign({ id: doesUserExist._id}, process.env.TOKEN as string, {
-          expiresIn: process.env.TOKEN_TIME,
-        });
+        const token = JWT.sign(
+          { id: doesUserExist._id },
+          process.env.TOKEN as string,
+          {
+            expiresIn: process.env.TOKEN_TIME,
+          }
+        );
         res.header("auth", token);
         await User.findOneAndUpdate(
           { _id: doesUserExist._id },
@@ -129,13 +136,12 @@ export default class user {
           success: true,
           confirmed: true,
           message: `Welcome back ${doesUserExist.name}`,
-          data: { name: doesUserExist.name, token },
+          data: { name: doesUserExist.name, token, _id: doesUserExist._id },
         });
       }
     }
 
     return res;
-
   }
 
   public async checkForLoggedInUser(
@@ -150,7 +156,6 @@ export default class user {
         userExist = await User.findOne({ _id: req.user.id });
       } catch (err) {
         userExist = null;
-        createError(next, "Session expired, please, log in again");
       }
 
       if (userExist) {
@@ -161,7 +166,7 @@ export default class user {
           ) as JWTToken;
           const currentDate = Date.now().toString().substring(0, 10);
 
-          if (currentDate > verifiedToken.exp){
+          if (currentDate > verifiedToken.exp) {
             return res.status(401).send({
               success: false,
               message: "Invalid user, please log in",
@@ -181,39 +186,86 @@ export default class user {
             res.send({
               success: true,
               message: `Welcome back ${userExist.name}`,
-              data: { name: userExist.name, token },
+              data: { name: userExist.name, token, _id: userExist._id },
             });
           }
         } catch (err) {
+          console.log("nada bien", err.message)
           return res.status(401).send({
             success: false,
             message: "Invalid user, please log in",
           });
         }
       } else {
+        console.log("to2 bien")
+
         return res.status(401).send({
           success: false,
           message: "Invalid user, please log in",
-        })}
+        });
+      }
 
-        return response;
+      return response;
     }
   }
 
-  public async confirmUser(req: CustomRequest, res: Response, next: NextFunction): Promise<void> {
-    const {token} = req.body;
-    let jwtResponse: {id: string}
+  public async getUserData(
+    req: CustomRequest,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    User.findOne({ _id: req.params.id })
+      .then((currentResponse: any) =>
+        res.send({ success: true, data: currentResponse })
+      )
+      .catch((err: { message: string }) => createError(next, err.message));
+  }
 
-    try{
-      jwtResponse = JWT.verify(token, process.env.TOKEN as Secret) as {id: string};
-      User.findOneAndUpdate({_id: jwtResponse.id}, {confirmed: true})
-      .then(() => {
-        res.send({success: true, message: 'User successfully confirmed'})
-      })
-      .catch((err: { message: string; }) => createError(next, err.message))
+  public async confirmUser(
+    req: CustomRequest,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    const { token } = req.body;
+    let jwtResponse: { id: string };
+
+    try {
+      jwtResponse = JWT.verify(token, process.env.TOKEN as Secret) as {
+        id: string;
+      };
+      User.findOneAndUpdate({ _id: jwtResponse.id }, { confirmed: true })
+        .then(() => {
+          res.send({ success: true, message: "User successfully confirmed" });
+        })
+        .catch((err: { message: string }) => createError(next, err.message));
+    } catch (err) {
+      createError(next, "Invalid Token, please retry");
     }
-    catch(err){
-      createError(next, "Invalid Token, please retry")
-    }
+  }
+
+  public async editUser(
+    req: CustomRequest,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    console.log(req.body);
+
+    User.findOneAndUpdate({ _id: req.params.id }, req.body)
+      .then(() =>
+        res.send({ success: true, message: "User updated" })
+      )
+      .catch((error: any) => createError(next, error.message));
+  }
+
+  public async resetInvoiceCounter(
+    req: CustomRequest,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    User.findOneAndUpdate({ _id: req.params.id }, {lastInvoiceNumber: 0})
+      .then(() =>
+        res.send({ success: true, message: "Invoice counter reseted" })
+      )
+      .catch((error: any) => createError(next, error.message));
   }
 }
