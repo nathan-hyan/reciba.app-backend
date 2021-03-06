@@ -1,7 +1,3 @@
-import test from "./routes/test"
-import notificacion from "./routes/notificacion";
-import packs from "./routes/packs"
-
 import cors from "cors";
 import morgan from "morgan";
 import bodyParser from "body-parser";
@@ -47,9 +43,6 @@ socket(io);
 app.use("/api/user", authRoute);
 app.use(`/api/invoice`, invoices);
 app.use(`/api/mail`, email);
-app.use(`/notificacion`, notificacion);
-app.use(`/transacciones`, test);
-app.use(`/packs`, packs);
 app.use(
   (
     error: { status: number; message: string; stack: unknown },
