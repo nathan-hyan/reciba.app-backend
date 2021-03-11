@@ -1,5 +1,4 @@
 import router from "express";
-import verify from "../middleware/verifyUser";
 import { CustomRequest } from "../constants/types";
 import user from "../controllers/auth";
 import hasUser from "../middleware/hasUser";
@@ -12,8 +11,8 @@ authRoute.post("/loggedInUser", hasUser as never, (req, res, next) =>
   checkForLoggedInUser(req as unknown as CustomRequest, res, next)
 );
 authRoute.post("/confirm", (req, res, next) => confirmUser(req as unknown as CustomRequest, res, next));
-authRoute.get("/getUser/:id", verify as never, (req, res, next) => getUserData(req as unknown as CustomRequest, res, next))
-authRoute.put("/editProfile/:id", verify as never, (req, res, next) => editUser(req as unknown as CustomRequest, res, next))
-authRoute.put("/resetInvoiceCounter/:id", verify as never, (req, res, next) => resetInvoiceCounter(req as unknown as CustomRequest, res, next))
+authRoute.get("/getUser/:id", hasUser as never, (req, res, next) => getUserData(req as unknown as CustomRequest, res, next))
+authRoute.put("/editProfile/:id", hasUser as never, (req, res, next) => editUser(req as unknown as CustomRequest, res, next))
+authRoute.put("/resetInvoiceCounter/:id", hasUser as never, (req, res, next) => resetInvoiceCounter(req as unknown as CustomRequest, res, next))
 
 export default authRoute;
