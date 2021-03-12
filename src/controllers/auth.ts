@@ -19,8 +19,6 @@ function prepareUserForConfirmation(userId: string, email: string) {
   });
 
   sendConfirmationEmail(TOKEN, email);
-
-  console.log(TOKEN);
 }
 
 export default class user {
@@ -146,8 +144,7 @@ export default class user {
 
   public async checkForLoggedInUser(
     req: CustomRequest,
-    res: Response,
-    next: NextFunction
+    res: Response
   ): Promise<Response> {
     {
       let userExist: UserSchema | null;
@@ -190,14 +187,14 @@ export default class user {
             });
           }
         } catch (err) {
-          console.log("nada bien", err.message)
+          console.log("nada bien", err.message);
           return res.status(401).send({
             success: false,
             message: "Invalid user, please log in",
           });
         }
       } else {
-        console.log("to2 bien")
+        console.log("to2 bien");
 
         return res.status(401).send({
           success: false,
@@ -248,12 +245,23 @@ export default class user {
     res: Response,
     next: NextFunction
   ): Promise<void> {
-    console.log(req.body);
-
     User.findOneAndUpdate({ _id: req.params.id }, req.body)
-      .then(() =>
-        res.send({ success: true, message: "User updated" })
-      )
+      .then((userResponse) => {
+        if (userResponse.email !== req.body.email) {
+          prepareUserForConfirmation(req.params.id, req.body.email);
+          User.findOneAndUpdate(
+            { _id: req.params.id },
+            { confirmed: false }
+          ).then(() => {
+            res.send({
+              success: true,
+              message: "User updated and confirmation mail sent",
+            });
+          });
+        } else {
+          res.send({ success: true, message: "User updated" });
+        }
+      })
       .catch((error: any) => createError(next, error.message));
   }
 
@@ -262,7 +270,7 @@ export default class user {
     res: Response,
     next: NextFunction
   ): Promise<void> {
-    User.findOneAndUpdate({ _id: req.params.id }, {lastInvoiceNumber: 0})
+    User.findOneAndUpdate({ _id: req.params.id }, { lastInvoiceNumber: 0 })
       .then(() =>
         res.send({ success: true, message: "Invoice counter reseted" })
       )
