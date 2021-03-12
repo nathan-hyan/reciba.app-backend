@@ -3,7 +3,7 @@ import createError from "../middleware/createError";
 import User, { UserSchema } from "../models/user";
 import JWT, { Secret } from "jsonwebtoken";
 import bcrypt from "bcryptjs";
-import { NextFunction, response, Response } from "express";
+import { NextFunction, response, Response, Request } from "express";
 import { verify } from "hcaptcha";
 import { CustomRequest } from "../constants/types";
 import emailHandler from "./email";
@@ -275,5 +275,49 @@ export default class user {
         res.send({ success: true, message: "Invoice counter reseted" })
       )
       .catch((error: any) => createError(next, error.message));
+  }
+
+  public async changePassword(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    const { password } = await User.findOne({ _id: req.params.id });
+
+    try {
+      const validPassword = await bcrypt.compare(
+        req.body.currentPassword,
+        password
+      );
+
+      if (validPassword) {
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(req.body.newPassword, salt);
+
+        const samePassword = await bcrypt.compare(
+          req.body.currentPassword,
+          hashedPassword
+        );
+
+        if (samePassword) {
+          createError(next, "Password is the same as the old one");
+        } else {
+          User.findOneAndUpdate(
+            { _id: req.params.id },
+            { password: hashedPassword }
+          )
+            .then(() => {
+              res.send({ test: "ok", password, hashedPassword });
+            })
+            .catch((err) => {
+              createError(next, err.message);
+            });
+        }
+      } else {
+        createError(next, `Current password isn't correct`, 401);
+      }
+    } catch (err) {
+      createError(next, err.message);
+    }
   }
 }
