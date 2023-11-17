@@ -6,6 +6,7 @@ export interface UserSchema extends Document {
   email: string;
   password: string;
   lastLogin?: string;
+  confirmed?: boolean;
   lastInvoiceNumber: number;
 }
 

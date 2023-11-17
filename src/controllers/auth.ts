@@ -83,13 +83,20 @@ export default class user {
             await newUser.save();
             res.send({ success: true, message: "User created" });
           } catch (error) {
-            createError(next, error.message);
+            let errorMessage: string;
+            if (error instanceof Error) errorMessage = error.message;
+            else errorMessage = String(error)
+            createError(next, errorMessage)
           }
+
         } else {
           createError(next, `Token error`);
         }
-      } catch (e) {
-        createError(next, `Token error ${e.message}`);
+      } catch (error) {
+         let errorMessage: string;
+            if (error instanceof Error) errorMessage = error.message;
+            else errorMessage = String(error)
+        createError(next, `Token error ${errorMessage}`);
       }
     }
   }
@@ -186,8 +193,7 @@ export default class user {
               data: { name: userExist.name, token, _id: userExist._id },
             });
           }
-        } catch (err) {
-          console.log("nada bien", err.message);
+        } catch (_err) {
           return res.status(401).send({
             success: false,
             message: "Invalid user, please log in",
@@ -247,7 +253,7 @@ export default class user {
   ): Promise<void> {
     User.findOneAndUpdate({ _id: req.params.id }, req.body)
       .then((userResponse) => {
-        if (userResponse.email !== req.body.email) {
+        if (userResponse && userResponse.email !== req.body.email) {
           prepareUserForConfirmation(req.params.id, req.body.email);
           User.findOneAndUpdate(
             { _id: req.params.id },
@@ -282,12 +288,16 @@ export default class user {
     res: Response,
     next: NextFunction
   ): Promise<void> {
-    const { password } = await User.findOne({ _id: req.params.id });
+    const user = await User.findOne({ _id: req.params.id });
+
+    if (!user) {
+      throw new Error('User not found')
+    }
 
     try {
       const validPassword = await bcrypt.compare(
         req.body.currentPassword,
-        password
+        user.password
       );
 
       if (validPassword) {
@@ -307,7 +317,7 @@ export default class user {
             { password: hashedPassword }
           )
             .then(() => {
-              res.send({ test: "ok", password, hashedPassword });
+              res.send({ test: "ok", password: user.password, hashedPassword });
             })
             .catch((err) => {
               createError(next, err.message);
@@ -316,8 +326,12 @@ export default class user {
       } else {
         createError(next, `Current password isn't correct`, 401);
       }
-    } catch (err) {
-      createError(next, err.message);
+    } catch (error) {
+      let errorMessage: string;
+      if (error instanceof Error) errorMessage = error.message;
+      else errorMessage = String(error)
+      createError(next, errorMessage)
+
     }
   }
 }
