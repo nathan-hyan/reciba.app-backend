@@ -1,4 +1,5 @@
 import { Schema, model } from "mongoose";
+import { InvoiceType } from '../constants/types';
 
 const Invoice = new Schema(
   {
@@ -89,4 +90,4 @@ const Invoice = new Schema(
   { timestamps: true }
 );
 
-export default model("Invoice", Invoice);
+export default model<InvoiceType>("Invoice", Invoice);

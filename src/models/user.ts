@@ -1,7 +1,7 @@
 import { Schema, model, Document } from "mongoose";
 
 export interface UserSchema extends Document {
-  logo: string;
+  logo?: string;
   name: string;
   email: string;
   password: string;

@@ -4,8 +4,14 @@ export interface CustomRequest extends Request {
   query: Query;
   params: Params;
   logo?: string;
-  body: ReadableStream<Uint8Array> & (EmailType & Invoice & UserType);
+  body: ReadableStream<Uint8Array> & (EmailType & InvoiceType & UserType);
 }
+
+interface DocumentResult<T> {
+    _doc: T;
+}
+
+
 
 type Query = {
   from: string,
@@ -28,7 +34,7 @@ type Params = {
   id: string;
 }
 
-type Invoice = {
+export interface InvoiceType extends DocumentResult<InvoiceType> {
   invoiceNumber: number;
   date: string;
   from: string;

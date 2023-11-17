@@ -1,9 +1,9 @@
 import { Response, NextFunction } from "express";
 import createError from "../middleware/createError";
-import Invoice from "../models/invoice";
 import User from "../models/user";
+import Invoice from '../models/invoice'
 import GlobalCounter, { _Counter } from "../models/globalCounter";
-import { CustomRequest, UserType } from "../constants/types";
+import { CustomRequest, InvoiceType } from "../constants/types";
 
 interface OutputQuery {
   createdAt?: {
@@ -113,11 +113,13 @@ export default class invoice {
     res: Response,
     next: NextFunction
   ): Promise<void> {
-  const logo: UserType = req.user ? await User.findOne({_id: req.user.id}) : {logo: undefined};
+  const logo = req.user ? await User.findOne({_id: req.user.id}) : {logo: undefined};
 
+  
     Invoice.findOne({ _id: req.params.id })
       .then((response) => {
-        res.send({ success: true, data: {...response._doc, logo: logo.logo} });
+        if(!response) throw Error('Response is null!')
+        res.send({ success: true, data: {...response._doc, logo: logo?.logo} });
       })
       .catch((err: { message: string }) => {
         createError(next, err.message);
@@ -168,8 +170,11 @@ export default class invoice {
         message: "Invoice created",
         id: response._id,
       });
-    } catch (err) {
-      createError(next, err.message);
+    } catch (error) {
+      let errorMessage: string;
+      if (error instanceof Error) errorMessage = error.message;
+      else errorMessage = String(error)
+      createError(next, errorMessage);
     }
   }
 
@@ -213,10 +218,13 @@ export default class invoice {
         res.send({
           success: true,
           message: "Firma guardada correctamente",
-          id: updatedInvoice._id
+          id: updatedInvoice?._id
         });
-      } catch (err) {
-        createError(next, err.message);
+      } catch (error) {
+        let errorMessage: string;
+        if (error instanceof Error) errorMessage = error.message;
+        else errorMessage = String(error)
+        createError(next, errorMessage);
       }
     } else {
       createError(next, "This invoice is already signed.");
