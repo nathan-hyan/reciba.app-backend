@@ -11,6 +11,15 @@
     "start": "node build/app.js",
     "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm run build"
   },
+  "overrides": {
+    "word-wrap": "^1.2.4",
+    "socket.io-parser": "^4.2.2",
+    "path-parse": "^1.0.7",
+    "minimatch": "^3.0.5",
+    "hosted-git-info": "^2.8.9",
+    "glob-parent": "^5.1.2",
+    "engine.io": "^6.2.0"
+  },
   "author": "",
   "license": "ISC",
   "description": "",
